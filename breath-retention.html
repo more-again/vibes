@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Breath Retention</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.09);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --muted2: rgba(255,255,255,0.55);
+      --accent: rgba(255,255,255,0.92);
+      --danger: rgba(255,120,120,0.95);
+      --ok: rgba(140,255,180,0.95);
+      --shadow: 0 18px 50px rgba(0,0,0,0.45);
+      --radius: 18px;
+      --ring: rgba(255,255,255,0.16);
+      --ring2: rgba(255,255,255,0.10);
+      --tap: rgba(255,255,255,0.14);
+      --tap2: rgba(255,255,255,0.22);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      background:
+        radial-gradient(900px 900px at 20% 10%, rgba(120,140,255,0.16), transparent 55%),
+        radial-gradient(800px 800px at 80% 30%, rgba(120,255,220,0.12), transparent 55%),
+        radial-gradient(900px 900px at 50% 90%, rgba(255,120,220,0.10), transparent 55%),
+        linear-gradient(180deg, #070a13, var(--bg));
+      color: var(--text);
+      overflow-x:hidden;
+    }
+    .wrap{
+      min-height: 100%;
+      padding: 16px;
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      display:flex;
+      justify-content:center;
+    }
+    .app{
+      width: min(560px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 14px 8px 14px;
+      background: var(--panel);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    header .title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    header h1{
+      font-size: 18px;
+      margin:0;
+      letter-spacing: 0.2px;
+    }
+    header .sub{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+    .chiprow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+      align-items:center;
+      margin-top:2px;
+    }
+    .chip{
+      font-size:12px;
+      color: var(--muted);
+      padding:6px 10px;
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      user-select:none;
+      cursor:default;
+      white-space:nowrap;
+    }
+    .btn{
+      appearance:none;
+      border:none;
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.10);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      font-size: 14px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.18);
+    }
+    .btn.danger{
+      background: rgba(255,90,90,0.16);
+      border-color: rgba(255,90,90,0.22);
+    }
+    .btn.ghost{
+      background: transparent;
+      border-color: rgba(255,255,255,0.14);
+      color: var(--muted);
+      font-weight:600;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    .card{
+      background: var(--panel);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .controls .full{ grid-column: 1 / -1; }
+    label{
+      font-size: 12px;
+      color: var(--muted);
+      display:block;
+      margin-bottom: 6px;
+    }
+    select, input[type="number"]{
+      width:100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.20);
+      color: var(--text);
+      font-size: 15px;
+      outline:none;
+    }
+    select:focus, input[type="number"]:focus{
+      border-color: rgba(255,255,255,0.26);
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .row .left{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .muted{ color: var(--muted2); font-size: 12px; }
+    .stage{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 14px;
+      min-height: 420px;
+    }
+    .stageTop{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .stageTop .meta{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      align-items:flex-start;
+    }
+    .stageTop .meta .big{
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .stageTop .meta .small{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .stageTop .right{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+
+    .breathArea{
+      width: min(360px, 78vw);
+      aspect-ratio: 1 / 1;
+      position:relative;
+      display:grid;
+      place-items:center;
+      margin-top: 8px;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    .ring{
+      position:absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid var(--ring);
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.03) inset;
+    }
+    .ring2{
+      position:absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px solid var(--ring2);
+    }
+    .bubble{
+      width: 42%;
+      height: 42%;
+      border-radius: 28% 72% 55% 45% / 50% 45% 55% 50%;
+      background:
+        radial-gradient(50% 50% at 30% 25%, rgba(255,255,255,0.25), transparent 60%),
+        radial-gradient(60% 60% at 70% 70%, rgba(255,255,255,0.15), transparent 55%),
+        rgba(255,255,255,0.10);
+      border:1px solid rgba(255,255,255,0.12);
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,0.35));
+      transform: scale(var(--s, 1));
+      transition: transform var(--dur, 2s) linear;
+    }
+    .bubble.hold{
+      border-radius: 50%;
+      background:
+        radial-gradient(60% 60% at 30% 25%, rgba(255,255,255,0.22), transparent 60%),
+        radial-gradient(60% 60% at 70% 70%, rgba(255,255,255,0.12), transparent 55%),
+        rgba(255,255,255,0.08);
+    }
+    .centerText{
+      position:absolute;
+      inset: 0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-align:center;
+      padding: 24px;
+      pointer-events:none;
+    }
+    .centerText .mode{
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .centerText .main{
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .centerText .hint{
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.3;
+      max-width: 26ch;
+    }
+    .progress{
+      width:100%;
+      max-width: 560px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top: 8px;
+    }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.08);
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width: 0%;
+      background: rgba(255,255,255,0.22);
+      border-right: 1px solid rgba(255,255,255,0.18);
+      transition: width 0.15s linear;
+    }
+    .progressRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .history{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .historyHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .historyHeader h2{
+      font-size: 14px;
+      margin:0;
+      color: var(--text);
+      letter-spacing: 0.2px;
+    }
+    .sessionList{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .sessionItem{
+      padding: 10px 10px;
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .sessionItem .left{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 0;
+    }
+    .sessionItem .date{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .sessionItem .rounds{
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 650;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+    .sessionItem .meta{
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    .modalBg{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,0.55);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding: 14px;
+      padding-bottom: max(14px, env(safe-area-inset-bottom));
+    }
+    .modal{
+      width: min(560px, 100%);
+      background: rgba(14,18,34,0.92);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 20px 70px rgba(0,0,0,0.55);
+      backdrop-filter: blur(12px);
+    }
+    .modal h3{
+      margin: 2px 0 6px 0;
+      font-size: 14px;
+    }
+    .modal p{
+      margin:0 0 10px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .modal .actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.82);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+
+    @media (min-width: 520px){
+      .controls{ grid-template-columns: 1fr 1fr 1fr; }
+      .controls .full{ grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <header>
+        <div class="title">
+          <h1>Breath Retention</h1>
+          <div class="sub">
+            Wim Hof–style rounds: guided breaths → exhale hold timer → 15s inhale hold → next round.
+          </div>
+        </div>
+        <div class="chiprow">
+          <div class="chip" id="chipStatus">Ready</div>
+          <button class="btn ghost" id="btnHelp" type="button">Help</button>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card" id="setupCard">
+          <div class="row" style="margin-bottom:10px;">
+            <div class="left">
+              <div style="font-weight:800; letter-spacing:0.2px;">Session setup</div>
+              <div class="muted">All offline. Saved to your browser storage.</div>
+            </div>
+            <div class="left">
+              <button class="btn ghost" id="btnImport" type="button">Import</button>
+              <button class="btn ghost" id="btnExport" type="button">Export</button>
+              <input id="fileInput" type="file" accept="application/json" style="display:none" />
+            </div>
+          </div>
+
+          <div class="controls">
+            <div>
+              <label for="breaths">Breaths per round</label>
+              <select id="breaths"></select>
+            </div>
+            <div>
+              <label for="inhale">Inhale pace</label>
+              <select id="inhale"></select>
+            </div>
+            <div>
+              <label for="exhale">Exhale pace</label>
+              <select id="exhale"></select>
+            </div>
+            <div>
+              <label for="rounds">Rounds</label>
+              <select id="rounds"></select>
+            </div>
+            <div>
+              <label for="inhaleHold">Inhale hold (seconds)</label>
+              <input id="inhaleHold" type="number" min="5" max="60" step="1" value="15" />
+            </div>
+            <div class="full">
+              <div class="row">
+                <div class="left">
+                  <button class="btn primary" id="btnStart" type="button">Start session</button>
+                  <button class="btn" id="btnResume" type="button" style="display:none;">Resume</button>
+                  <button class="btn danger" id="btnReset" type="button">Reset</button>
+                </div>
+                <div class="muted" id="setupHint">
+                  Tip: add this page to your Home Screen for “app-like” use.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="stageCard" style="display:none;">
+          <div class="stage">
+            <div class="stageTop">
+              <div class="meta">
+                <div class="big" id="stageTitle">Breathing</div>
+                <div class="small" id="stageMeta">Round 1 of 3</div>
+              </div>
+              <div class="right">
+                <button class="btn" id="btnPause" type="button">Pause</button>
+                <button class="btn danger" id="btnStop" type="button">Stop</button>
+              </div>
+            </div>
+
+            <div class="breathArea" id="tapArea" aria-label="Tap area">
+              <div class="ring"></div>
+              <div class="ring2"></div>
+              <div class="bubble" id="bubble"></div>
+              <div class="centerText">
+                <div class="mode" id="modeLabel">INHALE</div>
+                <div class="main" id="mainNumber">1</div>
+                <div class="hint" id="hintText">Follow the bubble. Last breath ends with a full exhale.</div>
+              </div>
+            </div>
+
+            <div class="progress">
+              <div class="bar"><div id="barFill"></div></div>
+              <div class="progressRow">
+                <div id="progressLeft">Breath 1 / 30</div>
+                <div id="progressRight">Inhale 4.0s • Exhale 4.0s</div>
+              </div>
+            </div>
+
+            <div class="row" style="width:100%; margin-top:6px;">
+              <div class="muted" id="tapHint">During retention: double-tap the circle (or press Stop) to finish.</div>
+              <div class="muted" id="timeHint"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="history">
+            <div class="historyHeader">
+              <h2>Saved sessions</h2>
+              <div class="left">
+                <button class="btn ghost" id="btnClearHistory" type="button">Clear history</button>
+              </div>
+            </div>
+            <div class="sessionList" id="sessionList"></div>
+            <div class="muted" id="historyEmpty" style="display:none;">No sessions yet. Finish a session to save it here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help / Confirm Modal -->
+  <div class="modalBg" id="modalBg" role="dialog" aria-modal="true">
+    <div class="modal" id="modal">
+      <h3 id="modalTitle">Help</h3>
+      <p id="modalBody"></p>
+      <div class="actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    /***********************
+     * Breath Retention App
+     * Single-file, offline.
+     * Persistence: localStorage
+     ************************/
+
+    const STORAGE_KEY = "breath-retention-v1";
+
+    // ---- Utilities ----
+    const $ = (id) => document.getElementById(id);
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+    function formatTimeMs(ms){
+      const totalSec = Math.max(0, Math.floor(ms / 1000));
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      if (m > 0) return `${m}:${String(s).padStart(2,"0")}`;
+      return `${s}s`;
+    }
+
+    function formatTimeSec(sec){
+      sec = Math.max(0, Math.floor(sec));
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      if (m > 0) return `${m}:${String(s).padStart(2,"0")}`;
+      return `${s}s`;
+    }
+
+    function isoToNice(iso){
+      try{
+        const d = new Date(iso);
+        return d.toLocaleString(undefined, {
+          weekday: "short", year: "numeric", month: "short", day: "numeric",
+          hour: "numeric", minute: "2-digit"
+        });
+      }catch(_){ return iso; }
+    }
+
+    function download(filename, text){
+      const blob = new Blob([text], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // ---- App State ----
+    const defaultState = () => ({
+      config: {
+        breaths: 30,           // 15..50 step 5
+        inhaleSec: 4,
+        exhaleSec: 4,
+        rounds: 3,             // 2..5
+        inhaleHoldSec: 15
+      },
+      history: [],             // saved sessions
+      draft: null              // in-progress session (optional)
+    });
+
+    let state = defaultState();
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return;
+
+        // Merge defensively
+        state = defaultState();
+        if (parsed.config) Object.assign(state.config, parsed.config);
+        if (Array.isArray(parsed.history)) state.history = parsed.history.slice(0, 200);
+        if (parsed.draft) state.draft = parsed.draft;
+      }catch(e){
+        console.warn("Failed to load:", e);
+      }
+    }
+
+    function saveState(){
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }catch(e){
+        console.error(e);
+        alert("Could not save. Storage may be full or blocked.");
+      }
+    }
+
+    // ---- UI Elements ----
+    const els = {
+      breaths: $("breaths"),
+      inhale: $("inhale"),
+      exhale: $("exhale"),
+      rounds: $("rounds"),
+      inhaleHold: $("inhaleHold"),
+      btnStart: $("btnStart"),
+      btnResume: $("btnResume"),
+      btnReset: $("btnReset"),
+      btnPause: $("btnPause"),
+      btnStop: $("btnStop"),
+      setupCard: $("setupCard"),
+      stageCard: $("stageCard"),
+      chipStatus: $("chipStatus"),
+      stageTitle: $("stageTitle"),
+      stageMeta: $("stageMeta"),
+      modeLabel: $("modeLabel"),
+      mainNumber: $("mainNumber"),
+      hintText: $("hintText"),
+      tapHint: $("tapHint"),
+      timeHint: $("timeHint"),
+      bubble: $("bubble"),
+      barFill: $("barFill"),
+      progressLeft: $("progressLeft"),
+      progressRight: $("progressRight"),
+      tapArea: $("tapArea"),
+      sessionList: $("sessionList"),
+      historyEmpty: $("historyEmpty"),
+      btnClearHistory: $("btnClearHistory"),
+      btnHelp: $("btnHelp"),
+      btnExport: $("btnExport"),
+      btnImport: $("btnImport"),
+      fileInput: $("fileInput"),
+      modalBg: $("modalBg"),
+      modalTitle: $("modalTitle"),
+      modalBody: $("modalBody"),
+      modalActions: $("modalActions")
+    };
+
+    // ---- Options ----
+    const paceOptions = [
+      {label:"Fast (2s)", v:2},
+      {label:"Medium (4s)", v:4},
+      {label:"Slow (6s)", v:6},
+      {label:"Very slow (7s)", v:7},
+      {label:"Custom-ish (3s)", v:3},
+      {label:"Custom-ish (5s)", v:5},
+    ];
+
+    function populateSelect(sel, items, value){
+      sel.innerHTML = "";
+      for (const it of items){
+        const opt = document.createElement("option");
+        opt.value = String(it.v);
+        opt.textContent = it.label;
+        sel.appendChild(opt);
+      }
+      sel.value = String(value);
+    }
+
+    function populateBreaths(){
+      els.breaths.innerHTML = "";
+      for (let b=15; b<=50; b+=5){
+        const opt = document.createElement("option");
+        opt.value = String(b);
+        opt.textContent = `${b}`;
+        els.breaths.appendChild(opt);
+      }
+      els.breaths.value = String(state.config.breaths);
+    }
+
+    function populateRounds(){
+      els.rounds.innerHTML = "";
+      for (let r=2; r<=5; r++){
+        const opt = document.createElement("option");
+        opt.value = String(r);
+        opt.textContent = `${r}`;
+        els.rounds.appendChild(opt);
+      }
+      els.rounds.value = String(state.config.rounds);
+    }
+
+    // ---- Modal ----
+    function closeModal(){
+      els.modalBg.style.display = "none";
+      els.modalActions.innerHTML = "";
+    }
+
+    function openModal({title, body, actions}){
+      els.modalTitle.textContent = title;
+      els.modalBody.innerHTML = body;
+      els.modalActions.innerHTML = "";
+
+      for (const a of actions){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn " + (a.variant || "");
+        btn.textContent = a.label;
+        btn.onclick = () => { if (a.onClick) a.onClick(); };
+        els.modalActions.appendChild(btn);
+      }
+      els.modalBg.style.display = "flex";
+    }
+
+    els.modalBg.addEventListener("click", (e) => {
+      if (e.target === els.modalBg) closeModal();
+    });
+
+    // ---- Session runtime ----
+    const Stage = {
+      IDLE: "idle",
+      BREATHING: "breathing",
+      RETENTION: "retention",       // exhale hold (count up)
+      INHALE_HOLD: "inhale_hold",   // fixed seconds
+      COMPLETE: "complete",
+      PAUSED: "paused"
+    };
+
+    let runtime = {
+      stage: Stage.IDLE,
+      pausedFrom: null,
+      // config snapshot
+      cfg: null,
+
+      roundIndex: 0,      // 0-based
+      breathIndex: 0,     // 1..breaths (current breath #)
+      phase: "inhale",    // inhale/exhale during breathing
+      phaseStartedAt: 0,
+      nextPhaseAt: 0,
+
+      retentionStartedAt: 0,
+      retentionElapsedMs: 0, // for pause/resume
+      inhaleHoldLeftMs: 0,
+
+      // results for this session
+      retentionsMs: [],
+
+      // timers
+      tickHandle: null,
+      // for double tap
+      lastTapAt: 0
+    };
+
+    function setChip(text){
+      els.chipStatus.textContent = text;
+    }
+
+    function showSetup(){
+      els.setupCard.style.display = "";
+      els.stageCard.style.display = "none";
+      els.btnResume.style.display = state.draft ? "" : "none";
+    }
+
+    function showStage(){
+      els.setupCard.style.display = "none";
+      els.stageCard.style.display = "";
+    }
+
+    function hardResetDraft(){
+      state.draft = null;
+      saveState();
+      els.btnResume.style.display = "none";
+    }
+
+    function snapshotConfigFromUI(){
+      const cfg = {
+        breaths: parseInt(els.breaths.value, 10),
+        inhaleSec: parseInt(els.inhale.value, 10),
+        exhaleSec: parseInt(els.exhale.value, 10),
+        rounds: parseInt(els.rounds.value, 10),
+        inhaleHoldSec: clamp(parseInt(els.inhaleHold.value, 10) || 15, 5, 60)
+      };
+      cfg.breaths = clamp(cfg.breaths, 15, 50);
+      cfg.rounds = clamp(cfg.rounds, 2, 5);
+      cfg.inhaleSec = clamp(cfg.inhaleSec, 2, 7);
+      cfg.exhaleSec = clamp(cfg.exhaleSec, 2, 7);
+      return cfg;
+    }
+
+    function applyConfigToUI(){
+      els.breaths.value = String(state.config.breaths);
+      els.inhale.value = String(state.config.inhaleSec);
+      els.exhale.value = String(state.config.exhaleSec);
+      els.rounds.value = String(state.config.rounds);
+      els.inhaleHold.value = String(state.config.inhaleHoldSec);
+    }
+
+    function updateConfigFromUI(){
+      state.config = snapshotConfigFromUI();
+      saveState();
+    }
+
+    function makeDraft(){
+      // store enough to resume, but keep it simple
+      state.draft = {
+        createdAt: new Date().toISOString(),
+        cfg: runtime.cfg,
+        roundIndex: runtime.roundIndex,
+        breathIndex: runtime.breathIndex,
+        stage: runtime.stage,
+        phase: runtime.phase,
+        phaseStartedAt: runtime.phaseStartedAt,
+        nextPhaseAt: runtime.nextPhaseAt,
+        retentionStartedAt: runtime.retentionStartedAt,
+        retentionElapsedMs: runtime.retentionElapsedMs,
+        inhaleHoldLeftMs: runtime.inhaleHoldLeftMs,
+        retentionsMs: runtime.retentionsMs
+      };
+      saveState();
+      els.btnResume.style.display = "";
+    }
+
+    function clearTick(){
+      if (runtime.tickHandle){
+        clearInterval(runtime.tickHandle);
+        runtime.tickHandle = null;
+      }
+    }
+
+    function startTick(){
+      clearTick();
+      runtime.tickHandle = setInterval(tick, 33);
+    }
+
+    function resetRuntime(){
+      clearTick();
+      runtime = {
+        stage: Stage.IDLE,
+        pausedFrom: null,
+        cfg: null,
+        roundIndex: 0,
+        breathIndex: 0,
+        phase: "inhale",
+        phaseStartedAt: 0,
+        nextPhaseAt: 0,
+        retentionStartedAt: 0,
+        retentionElapsedMs: 0,
+        inhaleHoldLeftMs: 0,
+        retentionsMs: [],
+        tickHandle: null,
+        lastTapAt: 0
+      };
+      els.bubble.classList.remove("hold");
+      els.bubble.style.setProperty("--s", "1");
+      els.bubble.style.setProperty("--dur", "2s");
+      els.barFill.style.width = "0%";
+      els.timeHint.textContent = "";
+      els.tapHint.textContent = "During retention: double-tap the circle (or press Stop) to finish.";
+      setChip("Ready");
+    }
+
+    // ---- Rendering ----
+    function renderStageHeader(){
+      const r = runtime.roundIndex + 1;
+      const R = runtime.cfg.rounds;
+      els.stageMeta.textContent = `Round ${r} of ${R}`;
+    }
+
+    function setBubbleScale(scale, durSec){
+      els.bubble.style.setProperty("--dur", `${durSec}s`);
+      els.bubble.style.setProperty("--s", String(scale));
+    }
+
+    function renderBreathingUI(){
+      const cfg = runtime.cfg;
+      const b = runtime.breathIndex;
+      const B = cfg.breaths;
+
+      els.stageTitle.textContent = "Breathing";
+      renderStageHeader();
+      els.bubble.classList.remove("hold");
+
+      els.modeLabel.textContent = runtime.phase.toUpperCase();
+      els.mainNumber.textContent = String(b);
+
+      els.hintText.textContent = (b === B)
+        ? "Last breath: exhale fully, then hold."
+        : "Follow the bubble. Keep it comfortable.";
+
+      const pct = clamp((b-1) / B, 0, 1) * 100;
+      els.barFill.style.width = `${pct}%`;
+
+      els.progressLeft.textContent = `Breath ${b} / ${B}`;
+      els.progressRight.textContent = `Inhale ${cfg.inhaleSec}s • Exhale ${cfg.exhaleSec}s`;
+
+      els.tapHint.textContent = "Tap not needed—just follow along.";
+      els.timeHint.textContent = "";
+    }
+
+    function renderRetentionUI(){
+      const cfg = runtime.cfg;
+      els.stageTitle.textContent = "Retention";
+      renderStageHeader();
+      els.bubble.classList.add("hold");
+
+      els.modeLabel.textContent = "HOLD (EXHALE)";
+      const now = performance.now();
+      const elapsed = runtime.retentionElapsedMs + (now - runtime.retentionStartedAt);
+      els.mainNumber.textContent = formatTimeMs(elapsed);
+
+      els.hintText.textContent = "Double-tap the circle when you need to breathe.";
+      els.tapHint.textContent = "Double-tap to stop retention (or press Stop).";
+      els.timeHint.textContent = "Then you’ll take one big inhale and hold it.";
+
+      // Fill bar = retention time is open-ended, so show pulse-y progress as seconds within a minute
+      const sec = Math.floor(elapsed/1000);
+      const pct = ((sec % 60) / 60) * 100;
+      els.barFill.style.width = `${pct}%`;
+
+      els.progressLeft.textContent = `Retention: ${formatTimeMs(elapsed)}`;
+      els.progressRight.textContent = `Round ${runtime.roundIndex+1}`;
+    }
+
+    function renderInhaleHoldUI(){
+      els.stageTitle.textContent = "Inhale Hold";
+      renderStageHeader();
+      els.bubble.classList.add("hold");
+
+      els.modeLabel.textContent = "HOLD (INHALE)";
+      els.mainNumber.textContent = formatTimeMs(runtime.inhaleHoldLeftMs);
+
+      els.hintText.textContent = "Big inhale. Hold gently.";
+      els.tapHint.textContent = "Auto-continues to next round.";
+      els.timeHint.textContent = "";
+
+      const total = runtime.cfg.inhaleHoldSec * 1000;
+      const pct = clamp(1 - (runtime.inhaleHoldLeftMs / total), 0, 1) * 100;
+      els.barFill.style.width = `${pct}%`;
+
+      els.progressLeft.textContent = `Inhale hold: ${formatTimeMs(runtime.inhaleHoldLeftMs)}`;
+      els.progressRight.textContent = `Next: breathing`;
+    }
+
+    function renderPausedUI(){
+      els.stageTitle.textContent = "Paused";
+      renderStageHeader();
+      els.modeLabel.textContent = "PAUSED";
+      els.hintText.textContent = "Tap Resume to continue.";
+      els.tapHint.textContent = "";
+      els.timeHint.textContent = "";
+      setBubbleScale(1.0, 0.2);
+    }
+
+    // ---- Engine ----
+    function startBreathingRound(){
+      runtime.stage = Stage.BREATHING;
+      runtime.breathIndex = 1;
+      runtime.phase = "inhale";
+      runtime.phaseStartedAt = performance.now();
+      runtime.nextPhaseAt = runtime.phaseStartedAt + runtime.cfg.inhaleSec * 1000;
+
+      // Bubble starts small then grows on inhale
+      setBubbleScale(1.55, runtime.cfg.inhaleSec);
+      renderBreathingUI();
+      makeDraft();
+      setChip("In session");
+    }
+
+    function advanceBreathingPhase(now){
+      const cfg = runtime.cfg;
+
+      if (runtime.phase === "inhale"){
+        // switch to exhale
+        runtime.phase = "exhale";
+        runtime.phaseStartedAt = now;
+        runtime.nextPhaseAt = now + cfg.exhaleSec * 1000;
+        setBubbleScale(1.0, cfg.exhaleSec);
+        renderBreathingUI();
+        makeDraft();
+        return;
+      }
+
+      // phase was exhale, finish a breath
+      if (runtime.breathIndex >= cfg.breaths){
+        // last breath ended with exhale -> start retention
+        startRetention();
+        return;
+      }
+
+      runtime.breathIndex += 1;
+      runtime.phase = "inhale";
+      runtime.phaseStartedAt = now;
+      runtime.nextPhaseAt = now + cfg.inhaleSec * 1000;
+      setBubbleScale(1.55, cfg.inhaleSec);
+      renderBreathingUI();
+      makeDraft();
+    }
+
+    function startRetention(){
+      runtime.stage = Stage.RETENTION;
+      runtime.retentionElapsedMs = 0;
+      runtime.retentionStartedAt = performance.now();
+      els.bubble.classList.add("hold");
+      setBubbleScale(1.12, 0.25);
+      renderRetentionUI();
+      makeDraft();
+    }
+
+    function finishRetention(){
+      const now = performance.now();
+      const elapsed = runtime.retentionElapsedMs + (now - runtime.retentionStartedAt);
+      runtime.retentionsMs[runtime.roundIndex] = Math.max(0, Math.floor(elapsed));
+
+      // move to inhale hold
+      runtime.stage = Stage.INHALE_HOLD;
+      runtime.inhaleHoldLeftMs = runtime.cfg.inhaleHoldSec * 1000;
+      setBubbleScale(1.20, 0.2);
+      renderInhaleHoldUI();
+      makeDraft();
+    }
+
+    function advanceInhaleHold(deltaMs){
+      runtime.inhaleHoldLeftMs = Math.max(0, runtime.inhaleHoldLeftMs - deltaMs);
+      renderInhaleHoldUI();
+      makeDraft();
+
+      if (runtime.inhaleHoldLeftMs <= 0){
+        // next round or done
+        if (runtime.roundIndex + 1 < runtime.cfg.rounds){
+          runtime.roundIndex += 1;
+          startBreathingRound();
+        } else {
+          completeSession();
+        }
+      }
+    }
+
+    function completeSession(){
+      runtime.stage = Stage.COMPLETE;
+      clearTick();
+      setChip("Complete");
+
+      // Save in history
+      const cfg = runtime.cfg;
+      const session = {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+        createdAt: new Date().toISOString(),
+        cfg: {...cfg},
+        retentionsMs: runtime.retentionsMs.slice(0, cfg.rounds)
+      };
+      state.history.unshift(session);
+      state.history = state.history.slice(0, 100);
+      hardResetDraft();
+      saveState();
+      renderHistory();
+
+      // Show summary + return to setup
+      const roundLines = session.retentionsMs.map((ms, i) => `Round ${i+1}: <span class="kbd">${formatTimeMs(ms)}</span>`).join("<br>");
+      openModal({
+        title: "Session saved",
+        body: `
+          <div style="margin-bottom:8px; color: rgba(255,255,255,0.86); font-weight:700;">
+            Retentions
+          </div>
+          <div style="line-height:1.55; margin-bottom:10px;">
+            ${roundLines}
+          </div>
+          <div class="muted">
+            Config: ${cfg.breaths} breaths • In ${cfg.inhaleSec}s / Out ${cfg.exhaleSec}s • ${cfg.rounds} rounds
+          </div>
+        `,
+        actions: [
+          {label:"Done", variant:"primary", onClick: () => { closeModal(); showSetup(); resetRuntime(); } }
+        ]
+      });
+    }
+
+    function tick(){
+      if (runtime.stage === Stage.PAUSED) return;
+
+      const now = performance.now();
+
+      if (runtime.stage === Stage.BREATHING){
+        if (now >= runtime.nextPhaseAt){
+          advanceBreathingPhase(now);
+        }
+        return;
+      }
+
+      if (runtime.stage === Stage.RETENTION){
+        renderRetentionUI();
+        // draft save throttled by renderRetentionUI -> makeDraft in render isn't needed; do minimal
+        // We'll avoid saving every frame; save every ~1s instead
+        return;
+      }
+
+      if (runtime.stage === Stage.INHALE_HOLD){
+        // Need delta time
+        const dt = 33; // approx; keep simple
+        advanceInhaleHold(dt);
+        return;
+      }
+    }
+
+    // ---- Controls ----
+    function beginSessionFromConfig(cfg){
+      resetRuntime();
+      runtime.cfg = cfg;
+      runtime.roundIndex = 0;
+      runtime.retentionsMs = new Array(cfg.rounds).fill(0);
+      showStage();
+      startBreathingRound();
+      startTick();
+      els.btnPause.textContent = "Pause";
+    }
+
+    function pause(){
+      if (runtime.stage === Stage.PAUSED) return;
+
+      runtime.pausedFrom = runtime.stage;
+      runtime.stage = Stage.PAUSED;
+
+      // accumulate retention elapsed if needed
+      if (runtime.pausedFrom === Stage.RETENTION){
+        const now = performance.now();
+        runtime.retentionElapsedMs += (now - runtime.retentionStartedAt);
+      }
+
+      clearTick();
+      renderPausedUI();
+      makeDraft();
+      els.btnPause.textContent = "Resume";
+      setChip("Paused");
+    }
+
+    function resume(){
+      if (runtime.stage !== Stage.PAUSED) return;
+
+      // restore stage
+      runtime.stage = runtime.pausedFrom || Stage.BREATHING;
+
+      // reset timing anchors
+      const now = performance.now();
+
+      if (runtime.stage === Stage.BREATHING){
+        // Recompute remaining time in current phase based on "nextPhaseAt - phaseStartedAt"
+        // We'll just restart the current phase duration fresh (simpler and fine for vibe app).
+        runtime.phaseStartedAt = now;
+        runtime.nextPhaseAt = now + ((runtime.phase === "inhale" ? runtime.cfg.inhaleSec : runtime.cfg.exhale
