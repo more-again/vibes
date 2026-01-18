@@ -5,23 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Breath Retention</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poiret+One&display=swap');
 
     :root {
-      /* Sky gradient colors - deeper "Your Name" palette */
-      --sky-top: #1a237e;
-      --sky-mid-1: #3949ab;
-      --sky-mid-2: #5c6bc0;
-      --sky-light: #7986cb;
-      --sky-warm: #ffcc80;
-      --sky-horizon: #ffab91;
-      --sky-pink: rgba(255, 138, 128, 0.5);
-      --sky-lavender: rgba(149, 117, 205, 0.4);
+      /* Sky gradient colors - cool blue palette */
+      --sky-top: #0d1b3e;
+      --sky-mid-1: #1e3a5f;
+      --sky-mid-2: #2d5a87;
+      --sky-light: #4a90b8;
+      --sky-pale: #7ec8e3;
+      --sky-horizon: #b8e4f0;
+      --sky-lavender: rgba(130, 150, 200, 0.3);
       
-      /* Cloud haze - warmer, more visible */
-      --cloud-1: rgba(255, 255, 255, 0.5);
-      --cloud-2: rgba(255, 248, 225, 0.45);
-      --cloud-3: rgba(255, 224, 178, 0.4);
+      /* Cloud haze - cool whites and pale blues */
+      --cloud-1: rgba(255, 255, 255, 0.45);
+      --cloud-2: rgba(230, 245, 255, 0.4);
+      --cloud-3: rgba(200, 230, 255, 0.35);
       
       /* Rainbow shimmer gradient (comet-inspired) */
       --rainbow-gradient: linear-gradient(
@@ -46,13 +45,13 @@
       --glass-bg: rgba(255, 255, 255, 0.35);
       --glass-border: rgba(255, 255, 255, 0.5);
       --glass-highlight: rgba(255, 255, 255, 0.75);
-      --glass-shadow: rgba(26, 35, 126, 0.2);
+      --glass-shadow: rgba(13, 27, 62, 0.25);
       --glass-blur: 16px;
       
       /* Text - darker for contrast on lighter elements */
-      --text: #1a237e;
-      --text-muted: #3949ab;
-      --text-soft: #5c6bc0;
+      --text: #0d1b3e;
+      --text-muted: #1e3a5f;
+      --text-soft: #2d5a87;
       --danger: #d32f2f;
       
       /* Bubble */
@@ -67,7 +66,7 @@
       /* Misc */
       --radius: 20px;
       --radius-pill: 999px;
-      --font: 'Quicksand', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font: 'Montserrat', ui-sans-serif, system-ui, -apple-system, sans-serif;
       --transition-fast: 0.15s ease;
       --transition-med: 0.3s ease;
       
@@ -90,38 +89,34 @@
       color: var(--text);
       overflow-x: hidden;
       
-      /* Anime sky background - "Your Name" inspired deep palette */
+      /* Anime sky background - cool blue palette */
       background: 
         /* Subtle grain via layered gradients */
         repeating-linear-gradient(
           0deg,
           transparent,
           transparent 3px,
-          rgba(255, 255, 255, 0.02) 3px,
-          rgba(255, 255, 255, 0.02) 6px
+          rgba(255, 255, 255, 0.015) 3px,
+          rgba(255, 255, 255, 0.015) 6px
         ),
-        /* Cloud haze - large soft ellipses with warm tones */
+        /* Cloud haze - large soft ellipses */
         radial-gradient(ellipse 130% 70% at 15% 25%, var(--cloud-1), transparent 55%),
         radial-gradient(ellipse 110% 90% at 80% 20%, var(--cloud-2), transparent 50%),
-        radial-gradient(ellipse 160% 60% at 50% 80%, var(--cloud-3), transparent 55%),
-        /* Lavender atmospheric haze */
+        radial-gradient(ellipse 160% 60% at 50% 85%, var(--cloud-3), transparent 55%),
+        /* Cool atmospheric haze */
         radial-gradient(ellipse 90% 80% at 5% 60%, var(--sky-lavender), transparent 55%),
-        radial-gradient(ellipse 70% 60% at 95% 50%, rgba(149, 117, 205, 0.25), transparent 50%),
-        /* Sun glow / golden hour bloom */
-        radial-gradient(ellipse 80% 80% at 75% 85%, rgba(255, 183, 77, 0.45), transparent 50%),
-        radial-gradient(ellipse 100% 70% at 50% 95%, var(--sky-pink), transparent 55%),
-        /* Lens flare / star burst hint */
-        radial-gradient(circle at 70% 75%, rgba(255, 255, 255, 0.3) 0%, transparent 15%),
-        /* Base sky gradient - deep blue to warm horizon */
+        radial-gradient(ellipse 70% 60% at 95% 50%, rgba(100, 150, 200, 0.2), transparent 50%),
+        /* Soft light glow */
+        radial-gradient(ellipse 80% 70% at 50% 90%, rgba(180, 220, 255, 0.25), transparent 50%),
+        /* Base sky gradient - deep blue to pale blue */
         linear-gradient(
           180deg,
           var(--sky-top) 0%,
           var(--sky-mid-1) 20%,
           var(--sky-mid-2) 40%,
-          var(--sky-light) 55%,
-          var(--sky-warm) 75%,
-          var(--sky-horizon) 90%,
-          #ffccbc 100%
+          var(--sky-light) 60%,
+          var(--sky-pale) 80%,
+          var(--sky-horizon) 100%
         );
       background-attachment: fixed;
       min-height: 100vh;
@@ -216,14 +211,15 @@
     }
 
     .page-header h1 {
-      font-size: 24px;
-      font-weight: 700;
+      font-family: 'Poiret One', var(--font);
+      font-size: 28px;
+      font-weight: 400;
       margin: 0;
-      letter-spacing: 0.3px;
+      letter-spacing: 1px;
       color: #fff;
       text-shadow: 
-        0 2px 10px rgba(26, 35, 126, 0.3),
-        0 0 30px rgba(0, 229, 255, 0.2);
+        0 2px 10px rgba(13, 27, 62, 0.4),
+        0 0 30px rgba(0, 229, 255, 0.25);
     }
 
     .page-header .sub {
@@ -1340,7 +1336,7 @@
               </div>
               <div class="right">
                 <button class="btn" id="btnPause" type="button">Pause</button>
-                <button class="btn ghost" id="btnEndRetention" type="button" style="display:none;">End retention</button>
+                <button class="btn ghost" id="btnEndRetention" type="button" style="display:none;">End Retention</button>
                 <button class="btn danger" id="btnStop" type="button">Stop</button>
               </div>
             </div>
@@ -2405,14 +2401,14 @@
           title: "How to use",
           body: `
             <p>
-              <b>Setup:</b> choose your desired breaths, pace, and rounds. Then tap <span class="kbd">Start session</span>.
+              <b>Setup:</b> Choose your desired breaths, pace, and rounds. Then tap <span class="kbd">Start Session</span>.
             </p>
             <p>
-              <b>Breathing:</b> Breathe in and out, followingthe expanding/contracting bubble.
-              On your <b>last breath</b>,  exhale and begin retention.
+              <b>Breathing:</b> Breathe in and out, following the expanding/contracting bubble.
+              On your <b>last breath</b>, exhale and begin retention.
             </p>
             <p>
-              <b>Retention:</b> The timer counts up as you hold. When you're ready to inhale, <b>Double-tap</b> the circle or press <span class="kbd">End retention</span> when you're done.
+              <b>Retention:</b> The timer counts up as you hold. When you're ready to inhale, <b>Double-tap</b> the circle or press <span class="kbd">End Retention</span>
             </p>
             <p>
               <b>Inhale hold:</b> Take a big inhale and hold for 15 more seconds. Then start the next round.
