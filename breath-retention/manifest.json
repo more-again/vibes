@@ -1,0 +1,24 @@
+{
+  "name": "Breath Retention",
+  "short_name": "Breathe",
+  "description": "Guided breath retention timer with visual breathing guide",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d1b3e",
+  "theme_color": "#1e3a5f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
