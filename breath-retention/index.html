@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Breath Retention</title>
+  <link rel="icon" type="image/png" href="../favicon.png?v=2" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poiret+One&display=swap');
 
@@ -198,21 +199,28 @@
     /* Page header - no card, just title */
     .page-header {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
+      flex-direction: column;
+      gap: 6px;
       padding: 8px 4px 4px 4px;
     }
 
-    .page-header .title {
+    .page-header .title-row {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-logo {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
     }
 
     .page-header h1 {
       font-family: 'Poiret One', var(--font);
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 400;
       margin: 0;
       letter-spacing: 1px;
@@ -223,10 +231,24 @@
     }
 
     .page-header .sub {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
       font-size: 13px;
       color: rgba(255, 255, 255, 0.85);
       line-height: 1.35;
       text-shadow: 0 1px 4px rgba(26, 35, 126, 0.2);
+    }
+
+    #setupCard .btn-card-help {
+      position: absolute !important;
+      top: 18px;
+      right: 18px;
+      left: auto;
+      padding: 6px 12px;
+      font-size: 12px;
+      z-index: 10;
     }
 
     /* Legacy header styles for cards that need them */
@@ -459,6 +481,7 @@
 
     .controls > div {
       overflow: visible;
+      text-align: center;
     }
 
     .controls .full {
@@ -493,9 +516,94 @@
       border-color: rgba(135, 206, 235, 0.8);
     }
 
+    /* Mini Bubble Preview for Pace */
+    .pace-preview {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 16px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .pace-divider {
+      width: 60%;
+      max-width: 200px;
+      height: 1px;
+      margin: 0 auto 16px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 20%,
+        rgba(255, 255, 255, 0.4) 80%,
+        transparent 100%
+      );
+    }
+
+    .mini-bubble {
+      width: 45%;
+      height: 45%;
+      position: relative;
+      border-radius: 30% 70% 53% 47% / 50% 45% 55% 50%;
+      background: 
+        radial-gradient(ellipse 80% 80% at 50% 50%, 
+          rgba(255, 255, 255, 0.15) 0%,
+          transparent 70%),
+        radial-gradient(circle at 30% 25%, 
+          rgba(255, 255, 255, 0.4) 0%,
+          transparent 25%),
+        radial-gradient(circle at 60% 30%,
+          rgba(0, 229, 255, 0.15) 0%,
+          transparent 40%),
+        rgba(255, 255, 255, 0.12);
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 
+        0 0 20px rgba(0, 229, 255, 0.25),
+        0 0 40px rgba(149, 117, 205, 0.15),
+        inset 0 0 15px rgba(255, 255, 255, 0.2),
+        inset 2px 2px 8px rgba(0, 229, 255, 0.15);
+      transform: scale(var(--mini-s, 1));
+      transition: transform var(--mini-dur, 2s) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mini-bubble::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      left: 18%;
+      width: 30%;
+      height: 22%;
+      background: radial-gradient(
+        ellipse 100% 100% at 50% 50%,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.5) 30%,
+        transparent 70%
+      );
+      border-radius: 50%;
+      transform: rotate(-20deg);
+    }
+
+    .mini-bubble::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        135deg,
+        rgba(0, 229, 255, 0.2) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(240, 98, 146, 0.15) 100%
+      );
+    }
+
     /* Segmented Control - Bubble Pills */
     .segmented {
       display: flex;
+      justify-content: center;
       gap: 10px;
       overflow-x: auto;
       overflow-y: visible;
@@ -1234,7 +1342,8 @@
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
-      .bubble {
+      .bubble,
+      .mini-bubble {
         transition: transform 0.3s ease;
       }
       
@@ -1296,25 +1405,30 @@
   <div class="wrap">
     <div class="app">
       <div class="page-header">
-        <div class="title">
+        <div class="title-row">
+          <img src="../icon.png" alt="" class="page-logo" />
           <h1>Guided Breath Retention</h1>
-          <div class="sub">
-            Guided breaths → exhale hold timer → 15s inhale hold → next round.
-          </div>
         </div>
-        <button class="btn ghost" id="btnHelp" type="button">Help</button>
+        <div class="sub">
+          Guided breaths → exhale hold timer → 15s inhale hold → next round.
+        </div>
       </div>
 
       <div class="grid">
         <div class="card" id="setupCard">
+          <button class="btn ghost btn-card-help" id="btnHelp" type="button">Help</button>
           <div class="controls">
+            <div>
+              <div class="pace-preview">
+                <div class="mini-bubble" id="miniBubble"></div>
+              </div>
+              <div class="pace-divider"></div>
+              <label id="labelInhale">Pace</label>
+              <div id="inhale" class="segmented" role="radiogroup" aria-labelledby="labelInhale"></div>
+            </div>
             <div>
               <label id="labelBreaths">Breaths per round</label>
               <div id="breaths" class="segmented" role="radiogroup" aria-labelledby="labelBreaths"></div>
-            </div>
-            <div>
-              <label id="labelInhale">Pace</label>
-              <div id="inhale" class="segmented" role="radiogroup" aria-labelledby="labelInhale"></div>
             </div>
             <div>
               <label id="labelRounds">Rounds</label>
@@ -1476,6 +1590,7 @@
       breaths: $("breaths"),
       inhale: $("inhale"),
       rounds: $("rounds"),
+      miniBubble: $("miniBubble"),
       btnStart: $("btnStart"),
       btnResume: $("btnResume"),
       btnPause: $("btnPause"),
@@ -1509,15 +1624,54 @@
     };
 
     const paceOptions = [
-      {label:"Fast", value:1},
-      {label:"Medium", value:2},
       {label:"Slow", value:3},
+      {label:"Medium", value:2},
+      {label:"Fast", value:1.3},
     ];
     const breathOptions = Array.from({length: 5}, (_, i) => {
       const value = 20 + (i * 5);
       return {label: String(value), value};
     });
     const roundOptions = [1, 2, 3, 4, 5].map(value => ({label: String(value), value}));
+
+    // Mini bubble preview animation
+    let miniBubbleInterval = null;
+    let miniBubblePhase = 'inhale';
+    
+    function startMiniBubbleAnimation(paceSec) {
+      // Clear any existing animation
+      if (miniBubbleInterval) {
+        clearInterval(miniBubbleInterval);
+      }
+      
+      const bubble = els.miniBubble;
+      if (!bubble) return;
+      
+      // Set transition duration
+      bubble.style.setProperty('--mini-dur', `${paceSec}s`);
+      
+      // Start with inhale (grow)
+      miniBubblePhase = 'inhale';
+      bubble.style.setProperty('--mini-s', '1.6');
+      
+      // Toggle between inhale and exhale
+      miniBubbleInterval = setInterval(() => {
+        if (miniBubblePhase === 'inhale') {
+          miniBubblePhase = 'exhale';
+          bubble.style.setProperty('--mini-s', '0.85');
+        } else {
+          miniBubblePhase = 'inhale';
+          bubble.style.setProperty('--mini-s', '1.6');
+        }
+      }, paceSec * 1000);
+    }
+    
+    function stopMiniBubbleAnimation() {
+      if (miniBubbleInterval) {
+        clearInterval(miniBubbleInterval);
+        miniBubbleInterval = null;
+      }
+    }
 
     function renderSegmentedControl(containerEl, options, selectedValue, onChange){
       containerEl.innerHTML = "";
@@ -1535,7 +1689,7 @@
           currentValue = opt.value;
           onChange(opt.value);
           for (const b of containerEl.querySelectorAll("button")){
-            const val = parseInt(b.dataset.value, 10);
+            const val = parseFloat(b.dataset.value);
             const selected = val === currentValue;
             b.classList.toggle("selected", selected);
             b.setAttribute("aria-pressed", selected ? "true" : "false");
@@ -1551,10 +1705,13 @@
       });
       renderSegmentedControl(els.inhale, paceOptions, state.config.inhaleSec, (value) => {
         updatePace(value);
+        startMiniBubbleAnimation(value);
       });
       renderSegmentedControl(els.rounds, roundOptions, state.config.rounds, (value) => {
         updateConfigValue("rounds", value);
       });
+      // Start mini bubble animation with current pace
+      startMiniBubbleAnimation(state.config.inhaleSec);
     }
 
     function closeModal(){
@@ -1736,11 +1893,15 @@
       els.setupCard.style.display = "";
       els.stageCard.style.display = "none";
       els.btnResume.style.display = state.draft ? "" : "none";
+      // Resume mini bubble animation
+      startMiniBubbleAnimation(state.config.inhaleSec);
     }
 
     function showStage(){
       els.setupCard.style.display = "none";
       els.stageCard.style.display = "";
+      // Stop mini bubble animation during session
+      stopMiniBubbleAnimation();
     }
 
     function hardResetDraft(){
