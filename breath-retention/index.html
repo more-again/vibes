@@ -5,415 +5,1247 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Breath Retention</title>
   <style>
-    :root{
-      --bg: #0b1020;
-      --panel: rgba(255,255,255,0.06);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.70);
-      --muted2: rgba(255,255,255,0.55);
-      --danger: rgba(255,120,120,0.95);
-      --shadow: 0 18px 50px rgba(0,0,0,0.45);
-      --radius: 18px;
-      --ring: rgba(255,255,255,0.16);
-      --ring2: rgba(255,255,255,0.10);
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+    :root {
+      /* Sky gradient colors - deeper "Your Name" palette */
+      --sky-top: #1a237e;
+      --sky-mid-1: #3949ab;
+      --sky-mid-2: #5c6bc0;
+      --sky-light: #7986cb;
+      --sky-warm: #ffcc80;
+      --sky-horizon: #ffab91;
+      --sky-pink: rgba(255, 138, 128, 0.5);
+      --sky-lavender: rgba(149, 117, 205, 0.4);
+      
+      /* Cloud haze - warmer, more visible */
+      --cloud-1: rgba(255, 255, 255, 0.5);
+      --cloud-2: rgba(255, 248, 225, 0.45);
+      --cloud-3: rgba(255, 224, 178, 0.4);
+      
+      /* Rainbow shimmer gradient (comet-inspired) */
+      --rainbow-gradient: linear-gradient(
+        135deg,
+        rgba(0, 229, 255, 0.8) 0%,
+        rgba(100, 181, 246, 0.8) 20%,
+        rgba(149, 117, 205, 0.8) 40%,
+        rgba(240, 98, 146, 0.8) 60%,
+        rgba(255, 138, 128, 0.8) 80%,
+        rgba(255, 183, 77, 0.8) 100%
+      );
+      --rainbow-border: linear-gradient(
+        135deg,
+        #00e5ff 0%,
+        #64b5f6 25%,
+        #9575cd 50%,
+        #f06292 75%,
+        #ffb74d 100%
+      );
+      
+      /* Liquid glass */
+      --glass-bg: rgba(255, 255, 255, 0.35);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --glass-highlight: rgba(255, 255, 255, 0.75);
+      --glass-shadow: rgba(26, 35, 126, 0.2);
+      --glass-blur: 16px;
+      
+      /* Text - darker for contrast on lighter elements */
+      --text: #1a237e;
+      --text-muted: #3949ab;
+      --text-soft: #5c6bc0;
+      --danger: #d32f2f;
+      
+      /* Bubble */
+      --bubble-rim: rgba(255, 255, 255, 0.8);
+      --bubble-highlight: rgba(255, 255, 255, 0.98);
+      --bubble-sheen-1: rgba(0, 229, 255, 0.35);
+      --bubble-sheen-2: rgba(240, 98, 146, 0.3);
+      --bubble-sheen-3: rgba(255, 183, 77, 0.25);
+      --bubble-inner: rgba(255, 255, 255, 0.2);
+      --mist-alpha: 0.08;
+      
+      /* Misc */
+      --radius: 20px;
+      --radius-pill: 999px;
+      --font: 'Quicksand', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --transition-fast: 0.15s ease;
+      --transition-med: 0.3s ease;
+      
+      /* Breathing text scale */
+      --text-scale: 1;
     }
-    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; }
-    body{
-      margin:0;
+
+    * { 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    html, body { 
+      height: 100%; 
+    }
+
+    body {
+      margin: 0;
       font-family: var(--font);
-      background:
-        radial-gradient(900px 900px at 20% 10%, rgba(120,140,255,0.16), transparent 55%),
-        radial-gradient(800px 800px at 80% 30%, rgba(120,255,220,0.12), transparent 55%),
-        radial-gradient(900px 900px at 50% 90%, rgba(255,120,220,0.10), transparent 55%),
-        linear-gradient(180deg, #070a13, var(--bg));
       color: var(--text);
-      overflow-x:hidden;
+      overflow-x: hidden;
+      
+      /* Anime sky background - "Your Name" inspired deep palette */
+      background: 
+        /* Subtle grain via layered gradients */
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(255, 255, 255, 0.02) 3px,
+          rgba(255, 255, 255, 0.02) 6px
+        ),
+        /* Cloud haze - large soft ellipses with warm tones */
+        radial-gradient(ellipse 130% 70% at 15% 25%, var(--cloud-1), transparent 55%),
+        radial-gradient(ellipse 110% 90% at 80% 20%, var(--cloud-2), transparent 50%),
+        radial-gradient(ellipse 160% 60% at 50% 80%, var(--cloud-3), transparent 55%),
+        /* Lavender atmospheric haze */
+        radial-gradient(ellipse 90% 80% at 5% 60%, var(--sky-lavender), transparent 55%),
+        radial-gradient(ellipse 70% 60% at 95% 50%, rgba(149, 117, 205, 0.25), transparent 50%),
+        /* Sun glow / golden hour bloom */
+        radial-gradient(ellipse 80% 80% at 75% 85%, rgba(255, 183, 77, 0.45), transparent 50%),
+        radial-gradient(ellipse 100% 70% at 50% 95%, var(--sky-pink), transparent 55%),
+        /* Lens flare / star burst hint */
+        radial-gradient(circle at 70% 75%, rgba(255, 255, 255, 0.3) 0%, transparent 15%),
+        /* Base sky gradient - deep blue to warm horizon */
+        linear-gradient(
+          180deg,
+          var(--sky-top) 0%,
+          var(--sky-mid-1) 20%,
+          var(--sky-mid-2) 40%,
+          var(--sky-light) 55%,
+          var(--sky-warm) 75%,
+          var(--sky-horizon) 90%,
+          #ffccbc 100%
+        );
+      background-attachment: fixed;
+      min-height: 100vh;
     }
-    .wrap{
+
+    .wrap {
       min-height: 100%;
       padding: 16px;
       padding-bottom: max(16px, env(safe-area-inset-bottom));
-      display:flex;
-      justify-content:center;
+      display: flex;
+      justify-content: center;
     }
-    .app{
+
+    .app {
       width: min(560px, 100%);
-      display:flex;
-      flex-direction:column;
-      gap:14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    header{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      padding: 14px 14px 8px 14px;
-      background: var(--panel);
-      border:1px solid rgba(255,255,255,0.08);
+
+    /* Liquid Glass Card Base */
+    .card, header, .modal {
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      box-shadow: 
+        0 8px 32px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: visible;
+      /* Rainbow shimmer border */
+      border: 1px solid transparent;
+      background-clip: padding-box;
     }
-    header .title{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
+
+    /* Rainbow border effect via pseudo-element */
+    .card::after, header::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: calc(var(--radius) + 1px);
+      background: var(--rainbow-gradient);
+      opacity: 0.3;
+      z-index: -1;
+      transition: opacity var(--transition-med);
     }
-    header h1{
-      font-size: 18px;
-      margin:0;
-      letter-spacing: 0.2px;
+
+    .card:hover::after, header:hover::after {
+      opacity: 0.45;
     }
-    header .sub{
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.25;
+
+    /* Subtle glass shine overlay */
+    .card::before, header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        transparent 100%
+      );
+      pointer-events: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+      z-index: 1;
+      overflow: hidden;
     }
-    .chiprow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      justify-content:flex-end;
-      align-items:center;
-      margin-top:2px;
+
+    /* Clip card content but allow button glows to extend */
+    .card > *, header > * {
+      position: relative;
+      z-index: 2;
     }
-    .chip{
-      font-size:12px;
-      color: var(--muted);
-      padding:6px 10px;
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius: 999px;
-      user-select:none;
-      cursor:default;
-      white-space:nowrap;
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
     }
-    .btn{
-      appearance:none;
-      border:none;
-      color: var(--text);
-      background: rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.10);
-      padding:10px 12px;
-      border-radius: 12px;
-      font-weight:600;
-      font-size: 14px;
-      cursor:pointer;
-      user-select:none;
-      transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease;
+
+    header .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .btn:active{ transform: translateY(1px); }
-    .btn.primary{
-      background: rgba(255,255,255,0.14);
-      border-color: rgba(255,255,255,0.18);
-    }
-    .btn.danger{
-      background: rgba(255,90,90,0.16);
-      border-color: rgba(255,90,90,0.22);
-    }
-    .btn.ghost{
-      background: transparent;
-      border-color: rgba(255,255,255,0.14);
-      color: var(--muted);
-      font-weight:600;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-    }
-    .card{
-      background: var(--panel);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
-    .controls{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    .controls .full{ grid-column: 1 / -1; }
-    label{
-      font-size: 12px;
-      color: var(--muted);
-      display:block;
-      margin-bottom: 6px;
-    }
-    select, input[type="number"]{
-      width:100%;
-      padding: 10px 10px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.20);
-      color: var(--text);
-      font-size: 15px;
-      outline:none;
-    }
-    select:focus, input[type="number"]:focus{
-      border-color: rgba(255,255,255,0.26);
-    }
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .row .left{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .muted{ color: var(--muted2); font-size: 12px; }
-    .stage{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding: 14px;
-      min-height: 420px;
-    }
-    .stageTop{
-      width:100%;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
-    }
-    .stageTop .meta{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      align-items:flex-start;
-    }
-    .stageTop .meta .big{
-      font-size: 14px;
+
+    header h1 {
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-    .stageTop .meta .small{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .stageTop .right{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      justify-content:flex-end;
-      flex-wrap:wrap;
-    }
-
-    .breathArea{
-      width: min(360px, 78vw);
-      aspect-ratio: 1 / 1;
-      position:relative;
-      display:grid;
-      place-items:center;
-      margin-top: 8px;
-      user-select:none;
-      touch-action: manipulation;
-    }
-    .ring{
-      position:absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 2px solid var(--ring);
-      box-shadow: 0 0 0 6px rgba(255,255,255,0.03) inset;
-    }
-    .ring2{
-      position:absolute;
-      inset: 12%;
-      border-radius: 50%;
-      border: 1px solid var(--ring2);
-    }
-    .bubble{
-      width: 42%;
-      height: 42%;
-      border-radius: 28% 72% 55% 45% / 50% 45% 55% 50%;
-      background:
-        radial-gradient(50% 50% at 30% 25%, rgba(255,255,255,0.25), transparent 60%),
-        radial-gradient(60% 60% at 70% 70%, rgba(255,255,255,0.15), transparent 55%),
-        rgba(255,255,255,0.10);
-      border:1px solid rgba(255,255,255,0.12);
-      filter: drop-shadow(0 18px 40px rgba(0,0,0,0.35));
-      transform: scale(var(--s, 1));
-      transition: transform var(--dur, 2s) linear;
-    }
-    .bubble.hold{
-      border-radius: 50%;
-      background:
-        radial-gradient(60% 60% at 30% 25%, rgba(255,255,255,0.22), transparent 60%),
-        radial-gradient(60% 60% at 70% 70%, rgba(255,255,255,0.12), transparent 55%),
-        rgba(255,255,255,0.08);
-    }
-    .centerText{
-      position:absolute;
-      inset: 0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      text-align:center;
-      padding: 24px;
-      pointer-events:none;
-    }
-    .centerText .mode{
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .centerText .main{
-      font-size: 44px;
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .centerText .hint{
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.3;
-      max-width: 26ch;
-    }
-    .progress{
-      width:100%;
-      max-width: 560px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-top: 8px;
-    }
-    .bar{
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.08);
-      overflow:hidden;
-    }
-    .bar > div{
-      height:100%;
-      width: 0%;
-      background: rgba(255,255,255,0.22);
-      border-right: 1px solid rgba(255,255,255,0.18);
-      transition: width 0.15s linear;
-    }
-    .progressRow{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .history{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .historyHeader{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .historyHeader h2{
-      font-size: 14px;
-      margin:0;
+      margin: 0;
+      letter-spacing: 0.3px;
       color: var(--text);
-      letter-spacing: 0.2px;
-    }
-    .sessionList{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .sessionItem{
-      padding: 10px 10px;
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .sessionItem .left{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      min-width: 0;
-    }
-    .sessionItem .date{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .sessionItem .rounds{
-      font-size: 13px;
-      color: var(--text);
-      font-weight: 650;
-      line-height: 1.25;
-      word-break: break-word;
-    }
-    .sessionItem .meta{
-      font-size: 12px;
-      color: var(--muted2);
     }
 
-    .modalBg{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,0.55);
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 14px;
-      padding-bottom: max(14px, env(safe-area-inset-bottom));
-    }
-    .modal{
-      width: min(560px, 100%);
-      background: rgba(14,18,34,0.92);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: 0 20px 70px rgba(0,0,0,0.55);
-      backdrop-filter: blur(12px);
-    }
-    .modal h3{
-      margin: 2px 0 6px 0;
-      font-size: 14px;
-    }
-    .modal p{
-      margin:0 0 10px 0;
-      color: var(--muted);
-      font-size: 13px;
+    header .sub {
+      font-size: 12px;
+      color: var(--text-muted);
       line-height: 1.35;
     }
-    .modal .actions{
-      display:flex;
-      gap:10px;
-      justify-content:flex-end;
-      flex-wrap:wrap;
-    }
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      padding: 2px 6px;
-      border-radius: 8px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.82);
-      font-size: 12px;
-      white-space:nowrap;
+
+    .chiprow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 2px;
     }
 
-    @media (min-width: 520px){
-      .controls{ grid-template-columns: 1fr 1fr 1fr; }
-      .controls .full{ grid-column: 1 / -1; }
+    /* Bubble Pill Chip */
+    .chip {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 2px solid transparent;
+      border-radius: var(--radius-pill);
+      box-shadow: 
+        0 2px 8px rgba(26, 35, 126, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      user-select: none;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .chip::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: var(--radius-pill);
+      background: var(--rainbow-gradient);
+      opacity: 0.25;
+      z-index: -1;
+    }
+
+    /* Liquid Glass Button */
+    .btn {
+      appearance: none;
+      font-family: var(--font);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 2px solid transparent;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 
+        0 4px 16px rgba(26, 35, 126, 0.12),
+        inset 0 1px 0 var(--glass-highlight);
+      transition: 
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast);
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Rainbow border on buttons */
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 16px;
+      background: var(--rainbow-gradient);
+      opacity: 0.25;
+      z-index: -1;
+      transition: opacity var(--transition-fast);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.35) 0%,
+        transparent 100%
+      );
+      pointer-events: none;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.65);
+      box-shadow: 
+        0 6px 24px rgba(26, 35, 126, 0.18),
+        0 0 20px rgba(0, 229, 255, 0.1),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    .btn:hover::after {
+      opacity: 0.45;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      box-shadow: 
+        0 2px 8px rgba(26, 35, 126, 0.1),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    .btn:active::after {
+      opacity: 0.6;
+    }
+
+    .btn.primary {
+      background: rgba(0, 229, 255, 0.35);
+      color: var(--sky-top);
+    }
+
+    .btn.primary::after {
+      opacity: 0.4;
+    }
+
+    .btn.primary:hover {
+      background: rgba(0, 229, 255, 0.5);
+    }
+
+    .btn.primary:hover::after {
+      opacity: 0.6;
+    }
+
+    .btn.danger {
+      background: rgba(255, 255, 255, 0.6);
+      color: #b71c1c;
+      font-weight: 700;
+      border: 2px solid rgba(183, 28, 28, 0.3);
+    }
+
+    .btn.danger::after {
+      background: linear-gradient(135deg, rgba(211, 47, 47, 0.5), rgba(183, 28, 28, 0.4));
+      opacity: 0.5;
+    }
+
+    .btn.danger:hover {
+      background: rgba(255, 255, 255, 0.75);
+      border-color: rgba(183, 28, 28, 0.5);
+    }
+
+    .btn.danger:hover::after {
+      opacity: 0.65;
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.25);
+      color: var(--text-muted);
+    }
+
+    .btn.ghost::after {
+      opacity: 0.15;
+    }
+
+    .btn.ghost:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .btn.ghost:hover::after {
+      opacity: 0.3;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .controls > div {
+      overflow: visible;
+    }
+
+    .controls .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(8px);
+      color: var(--text);
+      font-size: 15px;
+      font-family: var(--font);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transition: border-color var(--transition-fast);
+    }
+
+    input[type="number"]:focus {
+      border-color: rgba(135, 206, 235, 0.8);
+    }
+
+    /* Segmented Control - Bubble Pills */
+    .segmented {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 16px;
+      margin: -12px -16px;
+    }
+
+    .segmented button {
+      flex: 0 0 auto;
+      font-family: var(--font);
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: var(--text-soft);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 
+        0 2px 8px rgba(26, 35, 126, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transition: 
+        all var(--transition-fast),
+        transform 0.1s ease;
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Rainbow border glow for unselected (subtle) */
+    .segmented button::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: var(--radius-pill);
+      background: var(--rainbow-gradient);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity var(--transition-fast);
+    }
+
+    .segmented button:hover::after {
+      opacity: 0.3;
+    }
+
+    .segmented button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 45%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        transparent 100%
+      );
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+      border-radius: var(--radius-pill) var(--radius-pill) 0 0;
+    }
+
+    .segmented button.selected {
+      background: rgba(255, 255, 255, 0.75);
+      border-color: transparent;
+      color: var(--sky-top);
+      font-weight: 700;
+      box-shadow: 
+        0 4px 20px rgba(26, 35, 126, 0.25),
+        0 0 30px rgba(0, 229, 255, 0.2),
+        0 0 30px rgba(240, 98, 146, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    /* Strong rainbow border on selected */
+    .segmented button.selected::after {
+      opacity: 0.7;
+      animation: rainbowShimmer 3s linear infinite;
+    }
+
+    @keyframes rainbowShimmer {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .segmented button.selected::before {
+      opacity: 1;
+    }
+
+    .segmented button:active {
+      transform: scale(0.95);
+    }
+
+    .segmented button:active::after {
+      opacity: 0.9;
+    }
+
+    .segmented button:focus-visible {
+      outline: 2px solid rgba(0, 229, 255, 0.8);
+      outline-offset: 2px;
+    }
+
+    .toggleGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 2px;
+    }
+
+    .toggleRow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toggleRow input {
+      accent-color: #87CEEB;
+      width: 18px;
+      height: 18px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .row .left {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .muted {
+      color: var(--text-soft);
+      font-size: 12px;
+    }
+
+    .stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      min-height: 420px;
+    }
+
+    .stageTop {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .stageTop .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+    }
+
+    .stageTop .meta .big {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: var(--text);
+    }
+
+    .stageTop .meta .small {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stageTop .right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    /* Breathing Area */
+    .breathArea {
+      width: min(340px, 75vw);
+      aspect-ratio: 1 / 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+      margin-top: 12px;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    /* Outer decorative rings with rainbow shimmer */
+    .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: 
+        linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)) padding-box,
+        var(--rainbow-gradient) border-box;
+      box-shadow: 
+        0 0 40px rgba(0, 229, 255, 0.15),
+        0 0 60px rgba(149, 117, 205, 0.1),
+        inset 0 0 30px rgba(255, 255, 255, 0.1);
+      animation: ringRainbow 12s linear infinite;
+    }
+
+    @keyframes ringRainbow {
+      0% { filter: hue-rotate(0deg); opacity: 0.5; }
+      50% { filter: hue-rotate(180deg); opacity: 0.7; }
+      100% { filter: hue-rotate(360deg); opacity: 0.5; }
+    }
+
+    .ring2 {
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      background: 
+        linear-gradient(rgba(255,255,255,0.03), rgba(255,255,255,0.03)) padding-box,
+        var(--rainbow-gradient) border-box;
+      opacity: 0.4;
+      animation: ringRainbow 8s linear infinite reverse;
+    }
+
+    /* === SOAP BUBBLE === */
+    .bubble {
+      width: 44%;
+      height: 44%;
+      position: relative;
+      
+      /* Organic blob shape */
+      border-radius: 30% 70% 53% 47% / 50% 45% 55% 50%;
+      
+      /* Translucent base with inner mist */
+      background: 
+        /* Inner mist/smoke effect */
+        radial-gradient(ellipse 80% 80% at 50% 50%, 
+          rgba(255, 255, 255, var(--mist-alpha)) 0%,
+          transparent 70%),
+        /* Highlight spots */
+        radial-gradient(circle at 30% 25%, 
+          rgba(255, 255, 255, 0.45) 0%,
+          transparent 25%),
+        radial-gradient(circle at 70% 75%, 
+          rgba(255, 255, 255, 0.25) 0%,
+          transparent 30%),
+        /* Rainbow inner shimmer */
+        radial-gradient(circle at 60% 30%,
+          rgba(0, 229, 255, 0.12) 0%,
+          transparent 40%),
+        radial-gradient(circle at 40% 70%,
+          rgba(240, 98, 146, 0.1) 0%,
+          transparent 40%),
+        /* Base transparency */
+        rgba(255, 255, 255, 0.15);
+      
+      /* Rainbow rim glow */
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      box-shadow: 
+        /* Outer rainbow glow */
+        0 0 40px rgba(0, 229, 255, 0.3),
+        0 0 60px rgba(149, 117, 205, 0.2),
+        0 0 80px rgba(240, 98, 146, 0.15),
+        0 0 100px rgba(255, 183, 77, 0.1),
+        /* Inner rim highlights */
+        inset 0 0 35px rgba(255, 255, 255, 0.25),
+        inset 3px 3px 15px rgba(0, 229, 255, 0.2),
+        inset -3px -3px 15px rgba(240, 98, 146, 0.15);
+      
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      
+      transform: scale(var(--s, 1));
+      transition: 
+        transform var(--dur, 2s) cubic-bezier(0.4, 0, 0.2, 1),
+        border-radius 0.5s ease,
+        --mist-alpha 0.5s ease;
+    }
+
+    /* Rainbow border ring */
+    .bubble-ring {
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: var(--rainbow-gradient);
+      z-index: -1;
+      opacity: 0.5;
+      animation: bubbleRainbowRotate 8s linear infinite;
+    }
+
+    @keyframes bubbleRainbowRotate {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    /* Specular highlight - main bright curved highlight with rainbow edge */
+    .bubble::before {
+      content: '';
+      position: absolute;
+      top: 8%;
+      left: 15%;
+      width: 38%;
+      height: 28%;
+      background: 
+        radial-gradient(
+          ellipse 100% 100% at 50% 50%,
+          var(--bubble-highlight) 0%,
+          rgba(255, 255, 255, 0.7) 25%,
+          rgba(0, 229, 255, 0.3) 50%,
+          transparent 70%
+        );
+      border-radius: 50%;
+      transform: rotate(-20deg);
+      opacity: 0.95;
+    }
+
+    /* Chromatic sheen / rainbow refraction effect */
+    .bubble::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: 
+        /* Multi-color rainbow sweep */
+        linear-gradient(
+          135deg,
+          var(--bubble-sheen-1) 0%,
+          rgba(100, 181, 246, 0.2) 15%,
+          transparent 35%,
+          transparent 65%,
+          rgba(149, 117, 205, 0.15) 80%,
+          var(--bubble-sheen-2) 90%,
+          var(--bubble-sheen-3) 100%
+        ),
+        /* Secondary rainbow band */
+        linear-gradient(
+          -45deg,
+          transparent 0%,
+          transparent 40%,
+          rgba(255, 183, 77, 0.15) 50%,
+          rgba(240, 98, 146, 0.12) 60%,
+          transparent 70%
+        );
+      mix-blend-mode: normal;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    /* Inhale state - more opaque, milky mist */
+    .bubble.inhale {
+      --mist-alpha: 0.25;
+      border-radius: 35% 65% 58% 42% / 55% 40% 60% 45%;
+    }
+
+    /* Exhale state - clearer, more transparent */
+    .bubble.exhale {
+      --mist-alpha: 0.06;
+      border-radius: 28% 72% 48% 52% / 45% 50% 50% 55%;
+    }
+
+    /* Hold/Retention state */
+    .bubble.hold {
+      border-radius: 50%;
+      --mist-alpha: 0.15;
+    }
+
+    /* Retention mode - gentle pulse animation with rainbow */
+    .bubble.retention {
+      animation: retentionPulse 4s ease-in-out infinite;
+    }
+
+    .bubble.retention::before {
+      animation: highlightDrift 6s ease-in-out infinite;
+    }
+
+    .bubble.retention::after {
+      animation: rainbowSheenPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes retentionPulse {
+      0%, 100% { 
+        transform: scale(var(--s, 1)); 
+        box-shadow: 
+          0 0 40px rgba(0, 229, 255, 0.3),
+          0 0 60px rgba(149, 117, 205, 0.2),
+          0 0 80px rgba(240, 98, 146, 0.15),
+          inset 0 0 35px rgba(255, 255, 255, 0.25),
+          inset 3px 3px 15px rgba(0, 229, 255, 0.2),
+          inset -3px -3px 15px rgba(240, 98, 146, 0.15);
+      }
+      50% { 
+        transform: scale(calc(var(--s, 1) * 1.03)); 
+        box-shadow: 
+          0 0 55px rgba(0, 229, 255, 0.4),
+          0 0 80px rgba(149, 117, 205, 0.3),
+          0 0 110px rgba(240, 98, 146, 0.2),
+          0 0 130px rgba(255, 183, 77, 0.15),
+          inset 0 0 45px rgba(255, 255, 255, 0.3),
+          inset 4px 4px 20px rgba(0, 229, 255, 0.25),
+          inset -4px -4px 20px rgba(240, 98, 146, 0.2);
+      }
+    }
+
+    @keyframes rainbowSheenPulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 0.9; }
+    }
+
+    @keyframes highlightDrift {
+      0%, 100% {
+        top: 8%;
+        left: 15%;
+        transform: rotate(-20deg);
+      }
+      50% {
+        top: 10%;
+        left: 18%;
+        transform: rotate(-15deg);
+      }
+    }
+
+    /* Inhale Hold state */
+    .bubble.inhale-hold {
+      --mist-alpha: 0.2;
+      border-radius: 50%;
+      animation: inhaleHoldPulse 3s ease-in-out infinite;
+    }
+
+    .bubble.inhale-hold::after {
+      animation: rainbowSheenPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes inhaleHoldPulse {
+      0%, 100% { 
+        transform: scale(var(--s, 1)); 
+        box-shadow: 
+          0 0 40px rgba(0, 229, 255, 0.3),
+          0 0 60px rgba(149, 117, 205, 0.2),
+          0 0 80px rgba(240, 98, 146, 0.15),
+          inset 0 0 35px rgba(255, 255, 255, 0.25),
+          inset 3px 3px 15px rgba(0, 229, 255, 0.2),
+          inset -3px -3px 15px rgba(240, 98, 146, 0.15);
+      }
+      50% { 
+        transform: scale(calc(var(--s, 1) * 1.02)); 
+        box-shadow: 
+          0 0 50px rgba(0, 229, 255, 0.35),
+          0 0 75px rgba(149, 117, 205, 0.25),
+          0 0 100px rgba(240, 98, 146, 0.18),
+          inset 0 0 40px rgba(255, 255, 255, 0.28),
+          inset 3px 3px 18px rgba(0, 229, 255, 0.22),
+          inset -3px -3px 18px rgba(240, 98, 146, 0.18);
+      }
+    }
+
+    .centerText {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      padding: 24px;
+      pointer-events: none;
+    }
+
+    .centerText .mode {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      font-weight: 600;
+      transform: scale(var(--text-scale, 1));
+      transition: transform var(--dur, 2s) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .centerText .main {
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-shadow: 
+        0 2px 10px rgba(255, 255, 255, 0.6),
+        0 0 30px rgba(0, 229, 255, 0.15);
+      transform: scale(var(--text-scale, 1));
+      transition: transform var(--dur, 2s) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .centerText .hint {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.35;
+      max-width: 24ch;
+      transform: scale(var(--text-scale, 1));
+      transition: transform var(--dur, 2s) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Breathing text animation states */
+    .centerText.breathing-inhale {
+      --text-scale: 1.08;
+    }
+
+    .centerText.breathing-exhale {
+      --text-scale: 0.95;
+    }
+
+    .centerText.breathing-hold {
+      --text-scale: 1;
+    }
+
+    .progress {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(26, 35, 126, 0.1);
+      position: relative;
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 229, 255, 0.7) 0%,
+        rgba(100, 181, 246, 0.7) 25%,
+        rgba(149, 117, 205, 0.7) 50%,
+        rgba(240, 98, 146, 0.7) 75%,
+        rgba(255, 183, 77, 0.7) 100%
+      );
+      border-radius: var(--radius-pill);
+      transition: width 0.15s linear;
+      box-shadow: 
+        0 0 10px rgba(0, 229, 255, 0.4),
+        0 0 20px rgba(149, 117, 205, 0.2);
+    }
+
+    .progressRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .history {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .historyHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .historyHeader h2 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text);
+      letter-spacing: 0.2px;
+    }
+
+    .sessionList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sessionItem {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      box-shadow: 
+        0 2px 12px rgba(26, 35, 126, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      position: relative;
+      overflow: visible;
+    }
+
+    .sessionItem::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 18px;
+      background: var(--rainbow-gradient);
+      opacity: 0.2;
+      z-index: -1;
+      transition: opacity var(--transition-fast);
+    }
+
+    .sessionItem:hover::after {
+      opacity: 0.35;
+    }
+
+    .sessionItem .left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .sessionItem .date {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sessionItem .rounds {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .sessionItem .meta {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    /* Modal */
+    .modalBg {
+      position: fixed;
+      inset: 0;
+      background: rgba(135, 180, 200, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+
+    .modal {
+      width: min(560px, 100%);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 
+        0 20px 60px rgba(100, 120, 150, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+    }
+
+    .modal h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .modal p {
+      margin: 0 0 12px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .modal .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      padding: 3px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: 
+        linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)) padding-box,
+        var(--rainbow-gradient) border-box;
+      color: var(--text);
+      font-size: 12px;
+      white-space: nowrap;
+      box-shadow: 
+        0 1px 4px rgba(26, 35, 126, 0.1),
+        0 0 8px rgba(0, 229, 255, 0.1);
+    }
+
+    @media (min-width: 520px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+      .controls .full {
+        grid-column: 1 / -1;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .bubble {
+        transition: transform 0.3s ease;
+      }
+      
+      .bubble.retention,
+      .bubble.inhale-hold {
+        animation: none;
+      }
+      
+      .bubble.retention::before,
+      .bubble.retention::after,
+      .bubble.inhale-hold::after {
+        animation: none;
+      }
+      
+      .ring, .ring2 {
+        animation: none;
+      }
+      
+      .segmented button.selected::after {
+        animation: none;
+      }
+      
+      .centerText .mode,
+      .centerText .main,
+      .centerText .hint {
+        transition: transform 0.3s ease;
+      }
+      
+      .btn,
+      .segmented button,
+      input,
+      .bar > div {
+        transition: none;
+      }
+      
+      @keyframes retentionPulse {
+        0%, 100% { transform: scale(var(--s, 1)); }
+      }
+      
+      @keyframes highlightDrift {
+        0%, 100% { top: 8%; left: 15%; }
+      }
+      
+      @keyframes inhaleHoldPulse {
+        0%, 100% { transform: scale(var(--s, 1)); }
+      }
+      
+      @keyframes rainbowShimmer {
+        0%, 100% { filter: none; }
+      }
+      
+      @keyframes ringRainbow {
+        0%, 100% { filter: none; opacity: 0.5; }
+      }
     }
   </style>
 </head>
@@ -435,9 +1267,9 @@
 
       <div class="grid">
         <div class="card" id="setupCard">
-          <div class="row" style="margin-bottom:10px;">
+          <div class="row" style="margin-bottom:12px;">
             <div class="left">
-              <div style="font-weight:800; letter-spacing:0.2px;">Session setup</div>
+              <div style="font-weight:700; letter-spacing:0.2px; font-size:15px;">Session setup</div>
               <div class="muted">All offline. Saved to your browser storage.</div>
             </div>
             <div class="left">
@@ -449,24 +1281,33 @@
 
           <div class="controls">
             <div>
-              <label for="breaths">Breaths per round</label>
-              <select id="breaths"></select>
+              <label id="labelBreaths">Breaths per round</label>
+              <div id="breaths" class="segmented" role="radiogroup" aria-labelledby="labelBreaths"></div>
             </div>
             <div>
-              <label for="inhale">Inhale pace</label>
-              <select id="inhale"></select>
+              <label id="labelInhale">Pace</label>
+              <div id="inhale" class="segmented" role="radiogroup" aria-labelledby="labelInhale"></div>
             </div>
             <div>
-              <label for="exhale">Exhale pace</label>
-              <select id="exhale"></select>
+              <label id="labelRounds">Rounds</label>
+              <div id="rounds" class="segmented" role="radiogroup" aria-labelledby="labelRounds"></div>
             </div>
             <div>
-              <label for="rounds">Rounds</label>
-              <select id="rounds"></select>
-            </div>
-            <div>
-              <label for="inhaleHold">Inhale hold (seconds)</label>
-              <input id="inhaleHold" type="number" min="5" max="60" step="1" value="15" />
+              <label>Preferences</label>
+              <div class="toggleGroup">
+                <label class="toggleRow">
+                  <input id="toggleWake" type="checkbox" />
+                  <span>Keep screen awake</span>
+                </label>
+                <label class="toggleRow">
+                  <input id="toggleSounds" type="checkbox" />
+                  <span>Sounds</span>
+                </label>
+                <label class="toggleRow">
+                  <input id="toggleHaptics" type="checkbox" />
+                  <span>Haptics</span>
+                </label>
+              </div>
             </div>
             <div class="full">
               <div class="row">
@@ -476,7 +1317,7 @@
                   <button class="btn danger" id="btnReset" type="button">Reset</button>
                 </div>
                 <div class="muted" id="setupHint">
-                  Tip: add this page to your Home Screen for “app-like” use.
+                  Tip: add this page to your Home Screen for "app-like" use.
                 </div>
               </div>
             </div>
@@ -492,6 +1333,7 @@
               </div>
               <div class="right">
                 <button class="btn" id="btnPause" type="button">Pause</button>
+                <button class="btn ghost" id="btnEndRetention" type="button" style="display:none;">End retention</button>
                 <button class="btn danger" id="btnStop" type="button">Stop</button>
               </div>
             </div>
@@ -516,7 +1358,7 @@
             </div>
 
             <div class="row" style="width:100%; margin-top:6px;">
-              <div class="muted" id="tapHint">During retention: double-tap the circle (or press Stop) to finish.</div>
+              <div class="muted" id="tapHint">During retention: double-tap the circle to finish.</div>
               <div class="muted" id="timeHint"></div>
             </div>
           </div>
@@ -585,10 +1427,13 @@
     const defaultState = () => ({
       config: {
         breaths: 30,
-        inhaleSec: 4,
-        exhaleSec: 4,
+        inhaleSec: 2,
+        exhaleSec: 2,
         rounds: 3,
-        inhaleHoldSec: 15
+        inhaleHoldSec: 15,
+        keepAwake: true,
+        soundsOn: false,
+        hapticsOn: true
       },
       history: [],
       draft: null
@@ -624,13 +1469,12 @@
     const els = {
       breaths: $("breaths"),
       inhale: $("inhale"),
-      exhale: $("exhale"),
-      rounds: $("rounds"),
-      inhaleHold: $("inhaleHold"),
+        rounds: $("rounds"),
       btnStart: $("btnStart"),
       btnResume: $("btnResume"),
       btnReset: $("btnReset"),
       btnPause: $("btnPause"),
+      btnEndRetention: $("btnEndRetention"),
       btnStop: $("btnStop"),
       setupCard: $("setupCard"),
       stageCard: $("stageCard"),
@@ -657,51 +1501,63 @@
       modalBg: $("modalBg"),
       modalTitle: $("modalTitle"),
       modalBody: $("modalBody"),
-      modalActions: $("modalActions")
+      modalActions: $("modalActions"),
+      toggleWake: $("toggleWake"),
+      toggleSounds: $("toggleSounds"),
+      toggleHaptics: $("toggleHaptics")
     };
 
-    // Fixed: deterministic options 2..7 (no duplicates)
     const paceOptions = [
-      {label:"2s", v:2},
-      {label:"3s", v:3},
-      {label:"4s", v:4},
-      {label:"5s", v:5},
-      {label:"6s", v:6},
-      {label:"7s", v:7},
+      {label:"Fast", value:1},
+      {label:"Medium", value:2},
+      {label:"Slow", value:3},
     ];
+    const breathOptions = Array.from({length: 5}, (_, i) => {
+      const value = 20 + (i * 5);
+      return {label: String(value), value};
+    });
+    const roundOptions = [1, 2, 3, 4, 5].map(value => ({label: String(value), value}));
 
-    function populateSelect(sel, items, value){
-      sel.innerHTML = "";
-      for (const it of items){
-        const opt = document.createElement("option");
-        opt.value = String(it.v);
-        opt.textContent = it.label;
-        sel.appendChild(opt);
+    function renderSegmentedControl(containerEl, options, selectedValue, onChange){
+      containerEl.innerHTML = "";
+      let currentValue = selectedValue;
+      for (const opt of options){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = opt.label;
+        btn.dataset.value = String(opt.value);
+        const isSelected = opt.value === currentValue;
+        btn.className = isSelected ? "selected" : "";
+        btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        btn.addEventListener("click", () => {
+          if (opt.value === currentValue) return;
+          currentValue = opt.value;
+          onChange(opt.value);
+          for (const b of containerEl.querySelectorAll("button")){
+            const val = parseInt(b.dataset.value, 10);
+            const selected = val === currentValue;
+            b.classList.toggle("selected", selected);
+            b.setAttribute("aria-pressed", selected ? "true" : "false");
+          }
+        });
+        containerEl.appendChild(btn);
       }
-      const exists = Array.from(sel.options).some(o => o.value === String(value));
-      sel.value = exists ? String(value) : (sel.options[0]?.value || "");
     }
 
-    function populateBreaths(){
-      els.breaths.innerHTML = "";
-      for (let b=15; b<=50; b+=5){
-        const opt = document.createElement("option");
-        opt.value = String(b);
-        opt.textContent = `${b}`;
-        els.breaths.appendChild(opt);
-      }
-      els.breaths.value = String(state.config.breaths);
-    }
-
-    function populateRounds(){
-      els.rounds.innerHTML = "";
-      for (let r=2; r<=5; r++){
-        const opt = document.createElement("option");
-        opt.value = String(r);
-        opt.textContent = `${r}`;
-        els.rounds.appendChild(opt);
-      }
-      els.rounds.value = String(state.config.rounds);
+    function refreshSetupControls(){
+      renderSegmentedControl(els.breaths, breathOptions, state.config.breaths, (value) => {
+        updateConfigValue("breaths", value);
+      });
+      renderSegmentedControl(els.inhale, paceOptions, state.config.inhaleSec, (value) => {
+        updatePace(value);
+      });
+      renderSegmentedControl(els.rounds, roundOptions, state.config.rounds, (value) => {
+        updateConfigValue("rounds", value);
+      });
+      els.toggleWake.checked = !!state.config.keepAwake;
+      els.toggleSounds.checked = !!state.config.soundsOn;
+      els.toggleHaptics.checked = !!state.config.hapticsOn;
+      els.toggleWake.disabled = !("wakeLock" in navigator);
     }
 
     function closeModal(){
@@ -758,6 +1614,122 @@
       tickHandle: null,
       lastTapAt: 0
     };
+    let wakeLockSentinel = null;
+    let audioCtx = null;
+
+    function isSessionActive(){
+      return runtime.stage === Stage.BREATHING ||
+        runtime.stage === Stage.RETENTION ||
+        runtime.stage === Stage.INHALE_HOLD;
+    }
+
+    // Update bubble state classes for CSS-driven visual changes
+    function updateBubbleState(state, phase) {
+      els.bubble.classList.remove('inhale', 'exhale', 'hold', 'retention', 'inhale-hold');
+      
+      // Also update center text breathing animation
+      const centerText = document.querySelector('.centerText');
+      centerText.classList.remove('breathing-inhale', 'breathing-exhale', 'breathing-hold');
+      
+      if (state === Stage.BREATHING) {
+        els.bubble.classList.add(phase); // 'inhale' or 'exhale'
+        // Add breathing text animation
+        if (phase === 'inhale') {
+          centerText.classList.add('breathing-inhale');
+        } else {
+          centerText.classList.add('breathing-exhale');
+        }
+      } else if (state === Stage.RETENTION) {
+        els.bubble.classList.add('hold', 'retention');
+        centerText.classList.add('breathing-hold');
+      } else if (state === Stage.INHALE_HOLD) {
+        els.bubble.classList.add('hold', 'inhale-hold');
+        centerText.classList.add('breathing-hold');
+      }
+    }
+
+    async function requestWakeLock(){
+      if (!state.config.keepAwake) return;
+      if (document.hidden) return;
+      if (!("wakeLock" in navigator)) return;
+      if (wakeLockSentinel) return;
+      try{
+        wakeLockSentinel = await navigator.wakeLock.request("screen");
+        wakeLockSentinel.addEventListener("release", () => {
+          wakeLockSentinel = null;
+        });
+      }catch(e){
+        console.warn("Wake lock failed:", e);
+      }
+    }
+
+    function releaseWakeLock(){
+      if (wakeLockSentinel){
+        wakeLockSentinel.release();
+        wakeLockSentinel = null;
+      }
+    }
+
+    function updateWakeLockForState(){
+      if (!state.config.keepAwake || document.hidden){
+        releaseWakeLock();
+        return;
+      }
+      if (runtime.stage === Stage.PAUSED || runtime.stage === Stage.IDLE || runtime.stage === Stage.COMPLETE){
+        releaseWakeLock();
+        return;
+      }
+      requestWakeLock();
+    }
+
+    function initAudioContext(){
+      if (!audioCtx){
+        const AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtor) audioCtx = new AudioCtor();
+      }
+      if (audioCtx && audioCtx.state === "suspended"){
+        audioCtx.resume();
+      }
+    }
+
+    function playClick(){
+      if (!state.config.soundsOn) return;
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(740, now);
+      gain.gain.setValueAtTime(0.0, now);
+      gain.gain.linearRampToValueAtTime(0.12, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    }
+
+    function doHaptic(pattern){
+      if (!state.config.hapticsOn) return;
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    }
+
+    function cueFeedback(kind){
+      if (kind === "transition"){
+        playClick();
+        doHaptic(10);
+        return;
+      }
+      if (kind === "retention"){
+        playClick();
+        doHaptic([12, 20, 12]);
+        return;
+      }
+      if (kind === "inhale_hold"){
+        playClick();
+        doHaptic([15, 25, 15]);
+      }
+    }
 
     function setChip(text){
       els.chipStatus.textContent = text;
@@ -782,21 +1754,41 @@
 
     function snapshotConfigFromUI(){
       const cfg = {
-        breaths: parseInt(els.breaths.value, 10),
-        inhaleSec: parseInt(els.inhale.value, 10),
-        exhaleSec: parseInt(els.exhale.value, 10),
-        rounds: parseInt(els.rounds.value, 10),
-        inhaleHoldSec: clamp(parseInt(els.inhaleHold.value, 10) || 15, 5, 60)
+        breaths: state.config.breaths,
+        inhaleSec: state.config.inhaleSec,
+        exhaleSec: state.config.exhaleSec,
+        rounds: state.config.rounds,
+        inhaleHoldSec: 15,
+        keepAwake: state.config.keepAwake,
+        soundsOn: state.config.soundsOn,
+        hapticsOn: state.config.hapticsOn
       };
-      cfg.breaths = clamp(cfg.breaths, 15, 50);
-      cfg.rounds = clamp(cfg.rounds, 2, 5);
-      cfg.inhaleSec = clamp(cfg.inhaleSec, 2, 7);
-      cfg.exhaleSec = clamp(cfg.exhaleSec, 2, 7);
+      cfg.breaths = clamp(cfg.breaths, 20, 40);
+      cfg.rounds = clamp(cfg.rounds, 1, 5);
+      cfg.inhaleSec = clamp(cfg.inhaleSec, 1, 3);
+      cfg.exhaleSec = clamp(cfg.exhaleSec, 1, 3);
       return cfg;
     }
 
+    function updateConfigValue(key, value){
+      state.config[key] = value;
+      state.config.breaths = clamp(state.config.breaths, 20, 40);
+      state.config.rounds = clamp(state.config.rounds, 1, 5);
+      state.config.inhaleSec = clamp(state.config.inhaleSec, 1, 3);
+      state.config.exhaleSec = clamp(state.config.exhaleSec, 1, 3);
+      state.config.inhaleHoldSec = 15;
+      saveState();
+    }
+
+    function updatePace(value){
+      state.config.inhaleSec = value;
+      state.config.exhaleSec = value;
+      updateConfigValue("inhaleSec", value);
+    }
+
     function updateConfigFromUI(){
-      state.config = snapshotConfigFromUI();
+      const cfg = snapshotConfigFromUI();
+      state.config = cfg;
       saveState();
     }
 
@@ -846,13 +1838,15 @@
         tickHandle: null,
         lastTapAt: 0
       };
-      els.bubble.classList.remove("hold");
+      els.bubble.classList.remove("hold", "inhale", "exhale", "retention", "inhale-hold");
       els.bubble.style.setProperty("--s", "1");
       els.bubble.style.setProperty("--dur", "2s");
       els.barFill.style.width = "0%";
       els.timeHint.textContent = "";
-      els.tapHint.textContent = "During retention: double-tap the circle (or press Stop) to finish.";
+      els.tapHint.textContent = "During retention: double-tap the circle to finish.";
+      els.btnEndRetention.style.display = "none";
       setChip("Ready");
+      updateWakeLockForState();
     }
 
     function renderStageHeader(){
@@ -864,6 +1858,9 @@
     function setBubbleScale(scale, durSec){
       els.bubble.style.setProperty("--dur", `${durSec}s`);
       els.bubble.style.setProperty("--s", String(scale));
+      // Also sync text breathing animation duration
+      const centerText = document.querySelector('.centerText');
+      centerText.style.setProperty("--dur", `${durSec}s`);
     }
 
     function renderBreathingUI(){
@@ -873,7 +1870,9 @@
 
       els.stageTitle.textContent = "Breathing";
       renderStageHeader();
-      els.bubble.classList.remove("hold");
+      
+      // Update bubble state for CSS
+      updateBubbleState(Stage.BREATHING, runtime.phase);
 
       els.modeLabel.textContent = runtime.phase.toUpperCase();
       els.mainNumber.textContent = String(b);
@@ -890,12 +1889,15 @@
 
       els.tapHint.textContent = "Tap not needed—just follow along.";
       els.timeHint.textContent = "";
+      els.btnEndRetention.style.display = "none";
     }
 
     function renderRetentionUI(){
       els.stageTitle.textContent = "Retention";
       renderStageHeader();
-      els.bubble.classList.add("hold");
+      
+      // Update bubble state for CSS
+      updateBubbleState(Stage.RETENTION);
 
       els.modeLabel.textContent = "HOLD (EXHALE)";
       const now = performance.now();
@@ -903,8 +1905,9 @@
       els.mainNumber.textContent = formatTimeMs(elapsed);
 
       els.hintText.textContent = "Double-tap the circle when you need to breathe.";
-      els.tapHint.textContent = "Double-tap to stop retention (or press Stop).";
-      els.timeHint.textContent = "Then you’ll take one big inhale and hold it.";
+      els.tapHint.textContent = "Double-tap the circle or use End retention.";
+      els.timeHint.textContent = "Then you'll take one big inhale and hold it.";
+      els.btnEndRetention.style.display = "";
 
       const sec = Math.floor(elapsed/1000);
       const pct = ((sec % 60) / 60) * 100;
@@ -917,7 +1920,9 @@
     function renderInhaleHoldUI(){
       els.stageTitle.textContent = "Inhale Hold";
       renderStageHeader();
-      els.bubble.classList.add("hold");
+      
+      // Update bubble state for CSS
+      updateBubbleState(Stage.INHALE_HOLD);
 
       els.modeLabel.textContent = "HOLD (INHALE)";
       els.mainNumber.textContent = formatTimeMs(runtime.inhaleHoldLeftMs);
@@ -925,6 +1930,7 @@
       els.hintText.textContent = "Big inhale. Hold gently.";
       els.tapHint.textContent = "Auto-continues to next round.";
       els.timeHint.textContent = "";
+      els.btnEndRetention.style.display = "none";
 
       const total = runtime.cfg.inhaleHoldSec * 1000;
       const pct = clamp(1 - (runtime.inhaleHoldLeftMs / total), 0, 1) * 100;
@@ -941,7 +1947,10 @@
       els.hintText.textContent = "Tap Resume to continue.";
       els.tapHint.textContent = "";
       els.timeHint.textContent = "";
-      setBubbleScale(1.0, 0.2);
+      setBubbleScale(1.2, 0.2);
+      els.btnEndRetention.style.display = "none";
+      // Remove animation classes when paused
+      els.bubble.classList.remove('retention', 'inhale-hold');
     }
 
     function startBreathingRound(){
@@ -951,10 +1960,17 @@
       runtime.phaseStartedAt = performance.now();
       runtime.nextPhaseAt = runtime.phaseStartedAt + runtime.cfg.inhaleSec * 1000;
 
-      setBubbleScale(1.55, runtime.cfg.inhaleSec);
+      setBubbleScale(0.82, 0.05);
       renderBreathingUI();
+      requestAnimationFrame(() => {
+        if (runtime.stage === Stage.BREATHING && runtime.phase === "inhale"){
+          setBubbleScale(1.85, runtime.cfg.inhaleSec);
+        }
+      });
+      cueFeedback("transition");
       makeDraft();
       setChip("In session");
+      updateWakeLockForState();
     }
 
     function advanceBreathingPhase(now){
@@ -964,8 +1980,9 @@
         runtime.phase = "exhale";
         runtime.phaseStartedAt = now;
         runtime.nextPhaseAt = now + cfg.exhaleSec * 1000;
-        setBubbleScale(1.0, cfg.exhaleSec);
+        setBubbleScale(0.82, cfg.exhaleSec);
         renderBreathingUI();
+        cueFeedback("transition");
         makeDraft();
         return;
       }
@@ -979,8 +1996,9 @@
       runtime.phase = "inhale";
       runtime.phaseStartedAt = now;
       runtime.nextPhaseAt = now + cfg.inhaleSec * 1000;
-      setBubbleScale(1.55, cfg.inhaleSec);
+      setBubbleScale(1.85, cfg.inhaleSec);
       renderBreathingUI();
+      cueFeedback("transition");
       makeDraft();
     }
 
@@ -988,9 +2006,9 @@
       runtime.stage = Stage.RETENTION;
       runtime.retentionElapsedMs = 0;
       runtime.retentionStartedAt = performance.now();
-      els.bubble.classList.add("hold");
       setBubbleScale(1.12, 0.25);
       renderRetentionUI();
+      cueFeedback("retention");
       makeDraft();
     }
 
@@ -1003,6 +2021,7 @@
       runtime.inhaleHoldLeftMs = runtime.cfg.inhaleHoldSec * 1000;
       setBubbleScale(1.20, 0.2);
       renderInhaleHoldUI();
+      cueFeedback("inhale_hold");
       makeDraft();
     }
 
@@ -1025,6 +2044,7 @@
       runtime.stage = Stage.COMPLETE;
       clearTick();
       setChip("Complete");
+      releaseWakeLock();
 
       const cfg = runtime.cfg;
       const session = {
@@ -1043,7 +2063,7 @@
       openModal({
         title: "Session saved",
         body: `
-          <div style="margin-bottom:8px; color: rgba(255,255,255,0.86); font-weight:700;">
+          <div style="margin-bottom:8px; color: var(--text); font-weight:700;">
             Retentions
           </div>
           <div style="line-height:1.55; margin-bottom:10px;">
@@ -1110,6 +2130,7 @@
       makeDraft();
       els.btnPause.textContent = "Resume";
       setChip("Paused");
+      updateWakeLockForState();
     }
 
     function resume(){
@@ -1123,7 +2144,7 @@
         runtime.nextPhaseAt = now + ((runtime.phase === "inhale" ? runtime.cfg.inhaleSec : runtime.cfg.exhaleSec) * 1000);
 
         const dur = (runtime.phase === "inhale" ? runtime.cfg.inhaleSec : runtime.cfg.exhaleSec);
-        setBubbleScale(runtime.phase === "inhale" ? 1.55 : 1.0, dur);
+        setBubbleScale(runtime.phase === "inhale" ? 1.85 : 0.82, dur);
         renderBreathingUI();
       }
 
@@ -1141,6 +2162,7 @@
       els.btnPause.textContent = "Pause";
       setChip("In session");
       makeDraft();
+      updateWakeLockForState();
     }
 
     function stopSession(confirm=true){
@@ -1150,6 +2172,7 @@
         showSetup();
         setChip("Ready");
         hardResetDraft();
+        releaseWakeLock();
       };
 
       if (!confirm){
@@ -1159,7 +2182,7 @@
 
       openModal({
         title: "Stop session?",
-        body: `This will discard the in-progress session (it won’t be saved to history).`,
+        body: `This will discard the in-progress session (it won't be saved to history).`,
         actions: [
           {label:"Cancel", onClick: () => closeModal() },
           {label:"Stop", variant:"danger", onClick: () => { closeModal(); doStop(); } }
@@ -1189,7 +2212,7 @@
 
       if (runtime.stage === Stage.BREATHING){
         const dur = (runtime.phase === "inhale" ? runtime.cfg.inhaleSec : runtime.cfg.exhaleSec);
-        setBubbleScale(runtime.phase === "inhale" ? 1.55 : 1.0, dur);
+        setBubbleScale(runtime.phase === "inhale" ? 1.85 : 0.82, dur);
         renderBreathingUI();
       } else if (runtime.stage === Stage.RETENTION){
         runtime.retentionStartedAt = performance.now();
@@ -1206,6 +2229,7 @@
       startTick();
       els.btnPause.textContent = "Pause";
       setChip("In session");
+      updateWakeLockForState();
     }
 
     function onTapArea(){
@@ -1221,10 +2245,6 @@
     }
 
     function onStopPressed(){
-      if (runtime.stage === Stage.RETENTION){
-        finishRetention();
-        return;
-      }
       stopSession(true);
     }
 
@@ -1317,10 +2337,7 @@
           state.draft = null;
           saveState();
 
-          populateBreaths();
-          populateRounds();
-          populateSelect(els.inhale, paceOptions, state.config.inhaleSec);
-          populateSelect(els.exhale, paceOptions, state.config.exhaleSec);
+          refreshSetupControls();
 
           renderHistory();
 
@@ -1338,27 +2355,31 @@
     }
 
     function wireUI(){
-      // Populate selects FIRST (important on iOS)
-      populateBreaths();
-      populateRounds();
-      populateSelect(els.inhale, paceOptions, state.config.inhaleSec);
-      populateSelect(els.exhale, paceOptions, state.config.exhaleSec);
-      els.inhaleHold.value = String(state.config.inhaleHoldSec);
+      refreshSetupControls();
 
       // Change handlers
-      els.breaths.addEventListener("change", () => { updateConfigFromUI(); });
-      els.inhale.addEventListener("change", () => { updateConfigFromUI(); });
-      els.exhale.addEventListener("change", () => { updateConfigFromUI(); });
-      els.rounds.addEventListener("change", () => { updateConfigFromUI(); });
-      els.inhaleHold.addEventListener("change", () => { updateConfigFromUI(); });
+      els.toggleWake.addEventListener("change", () => {
+        updateConfigValue("keepAwake", els.toggleWake.checked);
+        updateWakeLockForState();
+      });
+      els.toggleSounds.addEventListener("change", () => {
+        updateConfigValue("soundsOn", els.toggleSounds.checked);
+      });
+      els.toggleHaptics.addEventListener("change", () => {
+        updateConfigValue("hapticsOn", els.toggleHaptics.checked);
+      });
 
       els.btnStart.addEventListener("click", () => {
+        initAudioContext();
         updateConfigFromUI();
         const cfg = {...state.config};
         beginSessionFromConfig(cfg);
       });
 
-      els.btnResume.addEventListener("click", () => resumeDraft());
+      els.btnResume.addEventListener("click", () => {
+        initAudioContext();
+        resumeDraft();
+      });
 
       els.btnReset.addEventListener("click", () => {
         openModal({
@@ -1373,11 +2394,7 @@
               state.history = hist;
               saveState();
 
-              populateBreaths();
-              populateRounds();
-              populateSelect(els.inhale, paceOptions, state.config.inhaleSec);
-              populateSelect(els.exhale, paceOptions, state.config.exhaleSec);
-              els.inhaleHold.value = String(state.config.inhaleHoldSec);
+              refreshSetupControls();
 
               hardResetDraft();
               resetRuntime();
@@ -1390,6 +2407,10 @@
       els.btnPause.addEventListener("click", () => {
         if (runtime.stage === Stage.PAUSED) resume();
         else pause();
+      });
+
+      els.btnEndRetention.addEventListener("click", () => {
+        if (runtime.stage === Stage.RETENTION) finishRetention();
       });
 
       els.btnStop.addEventListener("click", () => onStopPressed());
@@ -1418,14 +2439,14 @@
           title: "How to use",
           body: `
             <p>
-              <b>Setup:</b> choose breaths, inhale/exhale pace, and rounds. Tap <span class="kbd">Start session</span>.
+              <b>Setup:</b> choose breaths, pace, and rounds. Tap <span class="kbd">Start session</span>.
             </p>
             <p>
               <b>Breathing:</b> follow the expanding/contracting shape.
               On the <b>last breath</b>, you exhale fully and it switches to retention.
             </p>
             <p>
-              <b>Retention:</b> timer counts up. <b>Double-tap</b> the circle (or press <span class="kbd">Stop</span>) when you’re done.
+              <b>Retention:</b> timer counts up. <b>Double-tap</b> the circle or press <span class="kbd">End retention</span> when you're done.
             </p>
             <p>
               <b>Inhale hold:</b> take a big inhale and hold for the configured seconds (default 15). Then it starts the next round.
@@ -1455,16 +2476,24 @@
           e.returnValue = "";
         }
       });
+
+      document.addEventListener("visibilitychange", () => {
+        updateWakeLockForState();
+      });
     }
 
     function init(){
       loadState();
 
-      state.config.breaths = clamp(state.config.breaths || 30, 15, 50);
-      state.config.rounds = clamp(state.config.rounds || 3, 2, 5);
-      state.config.inhaleSec = clamp(state.config.inhaleSec || 4, 2, 7);
-      state.config.exhaleSec = clamp(state.config.exhaleSec || 4, 2, 7);
-      state.config.inhaleHoldSec = clamp(state.config.inhaleHoldSec || 15, 5, 60);
+      state.config.breaths = clamp(state.config.breaths || 30, 20, 40);
+      state.config.rounds = clamp(state.config.rounds || 3, 1, 5);
+      state.config.inhaleSec = clamp(state.config.inhaleSec || 2, 1, 3);
+      state.config.exhaleSec = clamp(state.config.exhaleSec || state.config.inhaleSec || 2, 1, 3);
+      state.config.exhaleSec = state.config.inhaleSec;
+      state.config.inhaleHoldSec = 15;
+      state.config.keepAwake = state.config.keepAwake !== false;
+      state.config.soundsOn = !!state.config.soundsOn;
+      state.config.hapticsOn = state.config.hapticsOn !== false;
 
       wireUI();
       renderHistory();
