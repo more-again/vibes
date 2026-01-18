@@ -200,6 +200,40 @@
       z-index: 2;
     }
 
+    /* Page header - no card, just title */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 4px 4px 4px;
+    }
+
+    .page-header .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.3px;
+      color: #fff;
+      text-shadow: 
+        0 2px 10px rgba(26, 35, 126, 0.3),
+        0 0 30px rgba(0, 229, 255, 0.2);
+    }
+
+    .page-header .sub {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.35;
+      text-shadow: 0 1px 4px rgba(26, 35, 126, 0.2);
+    }
+
+    /* Legacy header styles for cards that need them */
     header {
       display: flex;
       align-items: flex-start;
@@ -344,20 +378,33 @@
     }
 
     .btn.primary {
-      background: rgba(0, 229, 255, 0.35);
+      background: rgba(255, 255, 255, 0.7);
       color: var(--sky-top);
     }
 
     .btn.primary::after {
-      opacity: 0.4;
+      opacity: 0.5;
     }
 
     .btn.primary:hover {
-      background: rgba(0, 229, 255, 0.5);
+      background: rgba(255, 255, 255, 0.85);
     }
 
     .btn.primary:hover::after {
-      opacity: 0.6;
+      opacity: 0.7;
+    }
+
+    /* Large button variant */
+    .btn-large {
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 18px;
+      width: 100%;
+    }
+
+    .btn-large::after {
+      border-radius: 20px;
     }
 
     .btn.danger {
@@ -1252,33 +1299,18 @@
 <body>
   <div class="wrap">
     <div class="app">
-      <header>
+      <div class="page-header">
         <div class="title">
-          <h1>Breath Retention</h1>
+          <h1>Guided Breath Retention</h1>
           <div class="sub">
-            Wim Hof–style rounds: guided breaths → exhale hold timer → 15s inhale hold → next round.
+            Guided breaths → exhale hold timer → 15s inhale hold → next round.
           </div>
         </div>
-        <div class="chiprow">
-          <div class="chip" id="chipStatus">Ready</div>
-          <button class="btn ghost" id="btnHelp" type="button">Help</button>
-        </div>
-      </header>
+        <button class="btn ghost" id="btnHelp" type="button">Help</button>
+      </div>
 
       <div class="grid">
         <div class="card" id="setupCard">
-          <div class="row" style="margin-bottom:12px;">
-            <div class="left">
-              <div style="font-weight:700; letter-spacing:0.2px; font-size:15px;">Session setup</div>
-              <div class="muted">All offline. Saved to your browser storage.</div>
-            </div>
-            <div class="left">
-              <button class="btn ghost" id="btnImport" type="button">Import</button>
-              <button class="btn ghost" id="btnExport" type="button">Export</button>
-              <input id="fileInput" type="file" accept="application/json" style="display:none" />
-            </div>
-          </div>
-
           <div class="controls">
             <div>
               <label id="labelBreaths">Breaths per round</label>
@@ -1292,34 +1324,9 @@
               <label id="labelRounds">Rounds</label>
               <div id="rounds" class="segmented" role="radiogroup" aria-labelledby="labelRounds"></div>
             </div>
-            <div>
-              <label>Preferences</label>
-              <div class="toggleGroup">
-                <label class="toggleRow">
-                  <input id="toggleWake" type="checkbox" />
-                  <span>Keep screen awake</span>
-                </label>
-                <label class="toggleRow">
-                  <input id="toggleSounds" type="checkbox" />
-                  <span>Sounds</span>
-                </label>
-                <label class="toggleRow">
-                  <input id="toggleHaptics" type="checkbox" />
-                  <span>Haptics</span>
-                </label>
-              </div>
-            </div>
-            <div class="full">
-              <div class="row">
-                <div class="left">
-                  <button class="btn primary" id="btnStart" type="button">Start session</button>
-                  <button class="btn" id="btnResume" type="button" style="display:none;">Resume</button>
-                  <button class="btn danger" id="btnReset" type="button">Reset</button>
-                </div>
-                <div class="muted" id="setupHint">
-                  Tip: add this page to your Home Screen for "app-like" use.
-                </div>
-              </div>
+            <div class="full" style="margin-top: 8px;">
+              <button class="btn primary btn-large" id="btnStart" type="button">Start Session</button>
+              <button class="btn btn-large" id="btnResume" type="button" style="display:none;">Resume</button>
             </div>
           </div>
         </div>
@@ -1367,9 +1374,12 @@
         <div class="card">
           <div class="history">
             <div class="historyHeader">
-              <h2>Saved sessions</h2>
+              <h2>Saved Sessions</h2>
               <div class="left">
-                <button class="btn ghost" id="btnClearHistory" type="button">Clear history</button>
+                <button class="btn ghost" id="btnImport" type="button">Import</button>
+                <button class="btn ghost" id="btnExport" type="button">Export</button>
+                <button class="btn ghost" id="btnClearHistory" type="button">Clear</button>
+                <input id="fileInput" type="file" accept="application/json" style="display:none" />
               </div>
             </div>
             <div class="sessionList" id="sessionList"></div>
@@ -1469,16 +1479,14 @@
     const els = {
       breaths: $("breaths"),
       inhale: $("inhale"),
-        rounds: $("rounds"),
+      rounds: $("rounds"),
       btnStart: $("btnStart"),
       btnResume: $("btnResume"),
-      btnReset: $("btnReset"),
       btnPause: $("btnPause"),
       btnEndRetention: $("btnEndRetention"),
       btnStop: $("btnStop"),
       setupCard: $("setupCard"),
       stageCard: $("stageCard"),
-      chipStatus: $("chipStatus"),
       stageTitle: $("stageTitle"),
       stageMeta: $("stageMeta"),
       modeLabel: $("modeLabel"),
@@ -1501,10 +1509,7 @@
       modalBg: $("modalBg"),
       modalTitle: $("modalTitle"),
       modalBody: $("modalBody"),
-      modalActions: $("modalActions"),
-      toggleWake: $("toggleWake"),
-      toggleSounds: $("toggleSounds"),
-      toggleHaptics: $("toggleHaptics")
+      modalActions: $("modalActions")
     };
 
     const paceOptions = [
@@ -1554,10 +1559,6 @@
       renderSegmentedControl(els.rounds, roundOptions, state.config.rounds, (value) => {
         updateConfigValue("rounds", value);
       });
-      els.toggleWake.checked = !!state.config.keepAwake;
-      els.toggleSounds.checked = !!state.config.soundsOn;
-      els.toggleHaptics.checked = !!state.config.hapticsOn;
-      els.toggleWake.disabled = !("wakeLock" in navigator);
     }
 
     function closeModal(){
@@ -1732,7 +1733,7 @@
     }
 
     function setChip(text){
-      els.chipStatus.textContent = text;
+      // Status chip removed from UI - no-op
     }
 
     function showSetup(){
@@ -2357,18 +2358,6 @@
     function wireUI(){
       refreshSetupControls();
 
-      // Change handlers
-      els.toggleWake.addEventListener("change", () => {
-        updateConfigValue("keepAwake", els.toggleWake.checked);
-        updateWakeLockForState();
-      });
-      els.toggleSounds.addEventListener("change", () => {
-        updateConfigValue("soundsOn", els.toggleSounds.checked);
-      });
-      els.toggleHaptics.addEventListener("change", () => {
-        updateConfigValue("hapticsOn", els.toggleHaptics.checked);
-      });
-
       els.btnStart.addEventListener("click", () => {
         initAudioContext();
         updateConfigFromUI();
@@ -2379,29 +2368,6 @@
       els.btnResume.addEventListener("click", () => {
         initAudioContext();
         resumeDraft();
-      });
-
-      els.btnReset.addEventListener("click", () => {
-        openModal({
-          title: "Reset app?",
-          body: `This clears in-progress session and returns settings to defaults. (Saved history stays unless you clear it.)`,
-          actions: [
-            {label:"Cancel", onClick: () => closeModal()},
-            {label:"Reset", variant:"danger", onClick: () => {
-              closeModal();
-              const hist = state.history;
-              state = defaultState();
-              state.history = hist;
-              saveState();
-
-              refreshSetupControls();
-
-              hardResetDraft();
-              resetRuntime();
-              renderHistory();
-            }}
-          ]
-        });
       });
 
       els.btnPause.addEventListener("click", () => {
@@ -2439,20 +2405,20 @@
           title: "How to use",
           body: `
             <p>
-              <b>Setup:</b> choose breaths, pace, and rounds. Tap <span class="kbd">Start session</span>.
+              <b>Setup:</b> choose your desired breaths, pace, and rounds. Then tap <span class="kbd">Start session</span>.
             </p>
             <p>
-              <b>Breathing:</b> follow the expanding/contracting shape.
-              On the <b>last breath</b>, you exhale fully and it switches to retention.
+              <b>Breathing:</b> Breathe in and out, followingthe expanding/contracting bubble.
+              On your <b>last breath</b>,  exhale and begin retention.
             </p>
             <p>
-              <b>Retention:</b> timer counts up. <b>Double-tap</b> the circle or press <span class="kbd">End retention</span> when you're done.
+              <b>Retention:</b> The timer counts up as you hold. When you're ready to inhale, <b>Double-tap</b> the circle or press <span class="kbd">End retention</span> when you're done.
             </p>
             <p>
-              <b>Inhale hold:</b> take a big inhale and hold for the configured seconds (default 15). Then it starts the next round.
+              <b>Inhale hold:</b> Take a big inhale and hold for 15 more seconds. Then start the next round.
             </p>
             <p>
-              <b>Saving:</b> when the session ends, retentions are saved locally. Use <span class="kbd">Export</span>/<span class="kbd">Import</span> to move data.
+              <b>Saving:</b> When the session ends, retentions are saved locally. Use <span class="kbd">Export</span>/<span class="kbd">Import</span> to move data.
             </p>
             <p class="muted">
               Note: This is a simple timer/guide, not medical advice—keep it comfortable.
