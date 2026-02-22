@@ -59,6 +59,19 @@
       flex-direction: column;
     }
 
+    /* ── Back link ── */
+
+    .back {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    .back:hover { color: var(--text); }
+
     /* ── Title ── */
 
     h1 {
@@ -317,6 +330,7 @@
 <body>
 
 <div class="page">
+  <a class="back" href="../">&larr; vibes</a>
   <h1>Writing Timer</h1>
 
   <!-- ── Setup ── -->

@@ -144,6 +144,18 @@
       gap: 16px;
     }
 
+    .back-link {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.55);
+      text-decoration: none;
+      padding: 4px 0;
+      letter-spacing: 0.03em;
+      font-family: var(--font);
+    }
+
+    .back-link:hover { color: rgba(255, 255, 255, 0.8); }
+
     /* Liquid Glass Card Base */
     .card, header, .modal {
       background: var(--glass-bg);
@@ -1410,6 +1422,7 @@
 <body>
   <div class="wrap">
     <div class="app">
+      <a class="back-link" href="../">&larr; vibes</a>
       <div class="page-header">
         <div class="title-row">
           <img src="./icon.png" alt="" class="page-logo" />

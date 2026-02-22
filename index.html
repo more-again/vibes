@@ -98,10 +98,9 @@
       line-height: 1.4;
     }
 
-    /* App-specific icon colors */
+    /* App-specific icon styles */
     .icon-breath {
-      background: linear-gradient(135deg, #1e3a5f, #4a90b8);
-      color: rgba(255, 255, 255, 0.9);
+      object-fit: cover;
     }
 
     .icon-write {
@@ -124,12 +123,7 @@
   <div class="grid">
 
     <a class="app-link" href="./breath-retention/">
-      <div class="app-icon icon-breath">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <circle cx="12" cy="12" r="9" opacity="0.6"/>
-          <circle cx="12" cy="12" r="5"/>
-        </svg>
-      </div>
+      <img class="app-icon icon-breath" src="./breath-retention/icon.png" alt="" />
       <div class="app-name">Breath Retention</div>
       <div class="app-desc">Guided breathing timer</div>
     </a>
