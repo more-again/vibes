@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vibes</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>~</text></svg>" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Special+Elite&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f0e8;
+      --text: #2c2c2c;
+      --text-light: #8a8478;
+      --border: #d4cfc6;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier Prime', 'Courier New', monospace;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Special Elite', 'Courier Prime', monospace;
+      font-size: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      margin-bottom: 2.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .app-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.8rem 1rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .app-link:hover {
+      background: rgba(0, 0, 0, 0.03);
+      border-color: var(--text-light);
+    }
+
+    .app-link:active {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .app-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .app-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .app-desc {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-top: 0.3rem;
+      line-height: 1.4;
+    }
+
+    /* App-specific icon colors */
+    .icon-breath {
+      background: linear-gradient(135deg, #1e3a5f, #4a90b8);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .icon-write {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Special Elite', serif;
+    }
+
+    @media (max-width: 340px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <h1>vibes</h1>
+
+  <div class="grid">
+
+    <a class="app-link" href="./breath-retention/">
+      <div class="app-icon icon-breath">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="12" cy="12" r="9" opacity="0.6"/>
+          <circle cx="12" cy="12" r="5"/>
+        </svg>
+      </div>
+      <div class="app-name">Breath Retention</div>
+      <div class="app-desc">Guided breathing timer</div>
+    </a>
+
+    <a class="app-link" href="./writing-timer/">
+      <div class="app-icon icon-write">W</div>
+      <div class="app-name">Writing Timer</div>
+      <div class="app-desc">Pomodoro for writers</div>
+    </a>
+
+  </div>
+</div>
+
+</body>
+</html>

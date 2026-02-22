@@ -392,7 +392,7 @@
   };
 
   const LIMITS = {
-    work:   { min: 1, max: 90, step: 5 },
+    work:   { min: 1, max: 90, step: 1 },
     rest:   { min: 1, max: 30, step: 1 },
     rounds: { min: 1, max: 20, step: 1 }
   };
@@ -536,6 +536,25 @@
     }
   }
 
+  function scheduleNotes(notes, startTime, delay, decay){
+    notes.forEach(function(freq, i){
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, startTime + i * delay);
+
+      gain.gain.setValueAtTime(0, startTime + i * delay);
+      gain.gain.linearRampToValueAtTime(0.25, startTime + i * delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + i * delay + decay);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime + i * delay);
+      osc.stop(startTime + i * delay + decay + 0.05);
+    });
+  }
+
   function playChime(type){
     if (!audioCtx) return;
 
@@ -543,41 +562,23 @@
     if (audioCtx.state === "suspended") audioCtx.resume();
 
     const now = audioCtx.currentTime;
-    let notes, delay, decay;
 
     if (type === "rest"){
-      // Work ended → rest: gentle descending (time to relax)
-      notes = [783.99, 659.25, 523.25]; // G5, E5, C5
-      delay = 0.25;
-      decay = 0.7;
+      // Work ended → rest: descending chime x3 over ~3s
+      var notes = [783.99, 659.25, 523.25]; // G5, E5, C5
+      for (var r = 0; r < 3; r++){
+        scheduleNotes(notes, now + r * 1.1, 0.25, 0.7);
+      }
     } else if (type === "work"){
-      // Rest ended → work: ascending (back to writing)
-      notes = [523.25, 659.25, 783.99]; // C5, E5, G5
-      delay = 0.25;
-      decay = 0.7;
+      // Rest ended → work: ascending chime x3 over ~3s
+      var notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+      for (var r = 0; r < 3; r++){
+        scheduleNotes(notes, now + r * 1.1, 0.25, 0.7);
+      }
     } else {
-      // Complete: celebratory arpeggio
-      notes = [523.25, 659.25, 783.99, 1046.50, 783.99]; // C5 E5 G5 C6 G5
-      delay = 0.2;
-      decay = 0.9;
+      // Complete: celebratory arpeggio (single, longer)
+      scheduleNotes([523.25, 659.25, 783.99, 1046.50, 783.99], now, 0.2, 0.9);
     }
-
-    notes.forEach(function(freq, i){
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, now + i * delay);
-
-      gain.gain.setValueAtTime(0, now + i * delay);
-      gain.gain.linearRampToValueAtTime(0.25, now + i * delay + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * delay + decay);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now + i * delay);
-      osc.stop(now + i * delay + decay + 0.05);
-    });
   }
 
   /* ═══ Wake Lock ═══ */
@@ -730,7 +731,14 @@
   function adjustField(field, dir){
     const lim = LIMITS[field];
     if (field === "work"){
-      config.workMin = Math.max(lim.min, Math.min(lim.max, config.workMin + dir * lim.step));
+      // Step by 1 under 10, by 5 at 10 and above
+      var v = config.workMin;
+      if (dir > 0){
+        v = v < 10 ? v + 1 : v + 5;
+      } else {
+        v = v <= 10 ? v - 1 : v - 5;
+      }
+      config.workMin = Math.max(lim.min, Math.min(lim.max, v));
     } else if (field === "rest"){
       config.restMin = Math.max(lim.min, Math.min(lim.max, config.restMin + dir * lim.step));
     } else if (field === "rounds"){
