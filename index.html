@@ -4,134 +4,328 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vibes</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>~</text></svg>" />
+  <link rel="icon" type="image/png" href="./favicon.png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Special+Elite&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Special+Elite&family=Courier+Prime&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f5f0e8;
-      --text: #2c2c2c;
-      --text-light: #8a8478;
-      --border: #d4cfc6;
+      --crt-bg: #0a0a0a;
+      --crt-green: #33ff33;
+      --crt-green-dim: #1a9a1a;
+      --crt-green-glow: rgba(51, 255, 51, 0.15);
+      --crt-border: #1a1a1a;
+      --font-crt: 'VT323', 'Courier New', monospace;
     }
 
     html, body {
       height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Courier Prime', 'Courier New', monospace;
-      -webkit-font-smoothing: antialiased;
+      background: var(--crt-bg);
+      color: var(--crt-green);
+      font-family: var(--font-crt);
+      -webkit-font-smoothing: none;
+    }
+
+    /* CRT scanline + flicker overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Subtle vignette */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+      pointer-events: none;
+      z-index: 99;
     }
 
     body {
       display: flex;
       justify-content: center;
-      align-items: center;
       padding: 2rem;
+      padding-top: 3rem;
     }
 
     .page {
       width: 100%;
-      max-width: 480px;
-      text-align: center;
+      max-width: 500px;
+    }
+
+    /* Terminal header */
+    .header {
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--crt-green-dim);
+      letter-spacing: 0.05em;
     }
 
     h1 {
-      font-family: 'Special Elite', 'Courier Prime', monospace;
-      font-size: 1.8rem;
+      font-family: var(--font-crt);
+      font-size: 2.4rem;
       font-weight: 400;
-      letter-spacing: 0.04em;
-      margin-bottom: 2.5rem;
+      font-style: italic;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3rem;
+      text-shadow: 0 0 10px var(--crt-green-glow), 0 0 20px var(--crt-green-glow);
     }
 
+    .prompt {
+      font-size: 1rem;
+      color: var(--crt-green-dim);
+      margin-bottom: 2rem;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1.1em;
+      background: var(--crt-green);
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* App grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
+      gap: 1rem;
     }
 
     .app-link {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       text-decoration: none;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.8rem 1rem;
-      transition: background 0.15s, border-color 0.15s;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--crt-border);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .app-link:hover {
-      background: rgba(0, 0, 0, 0.03);
-      border-color: var(--text-light);
+      border-color: var(--crt-green-dim);
+      box-shadow: 0 0 15px var(--crt-green-glow), inset 0 0 15px var(--crt-green-glow);
     }
 
     .app-link:active {
-      background: rgba(0, 0, 0, 0.06);
+      border-color: var(--crt-green);
     }
 
-    .app-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      margin-bottom: 0.75rem;
+    /* Each tile's preview area — styled like the app itself */
+    .tile-preview {
+      height: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Tile label area — CRT style */
+    .tile-label {
+      padding: 0.6rem 0.75rem;
+      background: rgba(51, 255, 51, 0.03);
+      border-top: 1px solid var(--crt-border);
     }
 
     .app-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-family: var(--font-crt);
+      font-size: 1rem;
+      color: var(--crt-green);
+      letter-spacing: 0.04em;
     }
 
     .app-desc {
-      font-size: 0.7rem;
-      color: var(--text-light);
-      margin-top: 0.3rem;
-      line-height: 1.4;
+      font-family: var(--font-crt);
+      font-size: 0.8rem;
+      color: var(--crt-green-dim);
+      margin-top: 0.15rem;
     }
 
-    /* App-specific icon styles */
-    .icon-breath {
-      object-fit: cover;
+    /* ── Breath Retention tile: sky gradient + bubble ── */
+    .preview-breath {
+      background:
+        radial-gradient(ellipse 130% 70% at 15% 25%, rgba(130, 150, 200, 0.3), transparent 55%),
+        radial-gradient(ellipse 110% 90% at 80% 20%, rgba(180, 210, 230, 0.25), transparent 50%),
+        linear-gradient(180deg, #0d1b3e 0%, #1e3a5f 25%, #2d5a87 45%, #4a90b8 65%, #7ec8e3 85%, #b8e4f0 100%);
     }
 
-    .icon-write {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Special Elite', serif;
+    .mini-bubble {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.5) 0%, transparent 30%),
+        radial-gradient(circle at 60% 30%, rgba(0,229,255,0.15) 0%, transparent 40%),
+        rgba(255,255,255,0.18);
+      box-shadow:
+        0 0 20px rgba(0,229,255,0.3),
+        0 0 40px rgba(149,117,205,0.15),
+        inset 0 0 15px rgba(255,255,255,0.25);
+      animation: float 3s ease-in-out infinite;
     }
 
-    @media (max-width: 340px) {
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-4px) scale(1.05); }
+    }
+
+    /* ── Writing Timer tile: warm paper + typewriter ── */
+    .preview-write {
+      background: #f5f0e8;
+    }
+
+    /* Hourglass container */
+    .hourglass {
+      width: 32px;
+      height: 48px;
+      position: relative;
+      animation: hourglass-flip 4s ease-in-out infinite;
+    }
+
+    /* Glass outline — two triangles meeting at center */
+    .hourglass::before,
+    .hourglass::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      height: 22px;
+      border: 2px solid #8a8478;
+      border-radius: 2px;
+    }
+
+    .hourglass::before {
+      top: 0;
+      clip-path: polygon(0% 0%, 100% 0%, 55% 100%, 45% 100%);
+    }
+
+    .hourglass::after {
+      bottom: 0;
+      clip-path: polygon(45% 0%, 55% 0%, 100% 100%, 0% 100%);
+    }
+
+    /* Sand in top half — drains away */
+    .sand-top {
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      right: 4px;
+      height: 20px;
+      background: #b07a4a;
+      clip-path: polygon(0% 0%, 100% 0%, 55% 100%, 45% 100%);
+      transform-origin: bottom center;
+      animation: sand-drain 4s ease-in infinite;
+    }
+
+    /* Sand in bottom half — fills up */
+    .sand-bottom {
+      position: absolute;
+      bottom: 2px;
+      left: 4px;
+      right: 4px;
+      height: 20px;
+      background: #b07a4a;
+      clip-path: polygon(45% 0%, 55% 0%, 100% 100%, 0% 100%);
+      transform-origin: bottom center;
+      animation: sand-fill 4s ease-out infinite;
+    }
+
+    /* Falling stream */
+    .sand-stream {
+      position: absolute;
+      left: 50%;
+      top: 22px;
+      width: 1.5px;
+      height: 4px;
+      margin-left: -0.75px;
+      background: #b07a4a;
+      animation: stream-flow 4s ease-in-out infinite;
+    }
+
+    @keyframes sand-drain {
+      0%, 5% { transform: scaleY(1); }
+      85%, 100% { transform: scaleY(0); }
+    }
+
+    @keyframes sand-fill {
+      0%, 5% { transform: scaleY(0); }
+      85%, 100% { transform: scaleY(1); }
+    }
+
+    @keyframes stream-flow {
+      0%, 3% { opacity: 0; }
+      8%, 80% { opacity: 1; }
+      85%, 100% { opacity: 0; }
+    }
+
+    @keyframes hourglass-flip {
+      0%, 90% { transform: rotate(0deg); }
+      95%, 100% { transform: rotate(180deg); }
+    }
+
+    @media (max-width: 360px) {
       .grid { grid-template-columns: 1fr; }
+      body { padding: 1.5rem; padding-top: 2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor, .mini-bubble, .hourglass, .sand-top, .sand-bottom, .sand-stream { animation: none; }
+      .sand-top { transform: scaleY(0.5); }
+      .sand-bottom { transform: scaleY(0.5); }
+      .sand-stream { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
 <div class="page">
-  <h1>vibes</h1>
+  <div class="header">visitor@vibes ~ $</div>
+  <h1>|/ibes</h1>
+  <div class="prompt">select a program<span class="cursor"></span></div>
 
   <div class="grid">
 
     <a class="app-link" href="./breath-retention/">
-      <img class="app-icon icon-breath" src="./breath-retention/icon.png" alt="" />
-      <div class="app-name">Breath Retention</div>
-      <div class="app-desc">Guided breathing timer</div>
+      <div class="tile-preview preview-breath">
+        <div class="mini-bubble"></div>
+      </div>
+      <div class="tile-label">
+        <div class="app-name">breath-retention</div>
+        <div class="app-desc">guided breathing</div>
+      </div>
     </a>
 
     <a class="app-link" href="./writing-timer/">
-      <div class="app-icon icon-write">W</div>
-      <div class="app-name">Writing Timer</div>
-      <div class="app-desc">Pomodoro for writers</div>
+      <div class="tile-preview preview-write">
+        <div class="hourglass">
+          <div class="sand-top"></div>
+          <div class="sand-stream"></div>
+          <div class="sand-bottom"></div>
+        </div>
+      </div>
+      <div class="tile-label">
+        <div class="app-name">writing-timer</div>
+        <div class="app-desc">pomodoro for writers</div>
+      </div>
     </a>
 
   </div>
