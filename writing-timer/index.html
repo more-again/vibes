@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Writing Timer</title>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#f5f0e8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✎</text></svg>" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f5f0e8'/><text x='50' y='62' text-anchor='middle' font-size='50' font-family='serif'>W</text></svg>" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap');
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f0e8;
+      --text: #2c2c2c;
+      --text-light: #8a8478;
+      --border: #d4cfc6;
+      --accent-work: #b07a4a;
+      --accent-rest: #6a8a6d;
+      --accent-work-bg: #f0e6d9;
+      --accent-rest-bg: #e2ede3;
+      --font-body: 'Courier Prime', 'Courier New', Courier, monospace;
+      --font-display: 'Special Elite', 'Courier Prime', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .page {
+      width: 100%;
+      max-width: 420px;
+      padding: 3rem 1.5rem 2rem;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Title ── */
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    /* ── Setup view ── */
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .setup-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setup-row:first-child {
+      border-top: 1px solid var(--border);
+    }
+
+    .setup-label {
+      flex-shrink: 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .setup-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .setup-value {
+      font-size: 1rem;
+      font-weight: 700;
+      min-width: 4.5ch;
+      text-align: center;
+    }
+
+    .btn-step {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.15s;
+    }
+
+    .btn-step:active {
+      background: var(--border);
+    }
+
+    /* ── Buttons ── */
+
+    .actions {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--text);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      padding: 0.55rem 1.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn:active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .btn-primary {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .btn-primary:active {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-ghost {
+      border-color: var(--border);
+      color: var(--text-light);
+    }
+
+    .btn-ghost:active {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* ── Timer view ── */
+
+    .timer-view {
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 2rem;
+    }
+
+    .phase-label {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+
+    .phase-label.work {
+      color: var(--accent-work);
+    }
+
+    .phase-label.rest {
+      color: var(--accent-rest);
+    }
+
+    .countdown {
+      font-family: var(--font-body);
+      font-size: 4.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      margin-bottom: 1.2rem;
+    }
+
+    .round-info {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      margin-bottom: 2.5rem;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 1px;
+      transition: width 0.3s linear, background-color 0.3s;
+    }
+
+    .progress-fill.work {
+      background: var(--accent-work);
+    }
+
+    .progress-fill.rest {
+      background: var(--accent-rest);
+    }
+
+    .timer-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* ── Paused indicator ── */
+
+    .paused-label {
+      display: none;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .paused-label.visible {
+      display: block;
+    }
+
+    /* ── Complete view ── */
+
+    .complete-view {
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 2rem;
+    }
+
+    .done-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .done-summary {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    /* ── Misc ── */
+
+    .spacer { flex: 1; }
+
+    .footer {
+      text-align: center;
+      padding-top: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      opacity: 0.5;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .page { padding: 2rem 1rem 1.5rem; }
+      .countdown { font-size: 3.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Writing Timer</h1>
+
+  <!-- ── Setup ── -->
+  <div id="setupView" class="view active">
+    <div class="setup-row">
+      <span class="setup-label">Work</span>
+      <div class="setup-controls">
+        <button class="btn-step" data-field="work" data-dir="-1" aria-label="Decrease work time">&minus;</button>
+        <span class="setup-value" id="workValue">25 min</span>
+        <button class="btn-step" data-field="work" data-dir="1" aria-label="Increase work time">+</button>
+      </div>
+    </div>
+    <div class="setup-row">
+      <span class="setup-label">Rest</span>
+      <div class="setup-controls">
+        <button class="btn-step" data-field="rest" data-dir="-1" aria-label="Decrease rest time">&minus;</button>
+        <span class="setup-value" id="restValue">5 min</span>
+        <button class="btn-step" data-field="rest" data-dir="1" aria-label="Increase rest time">+</button>
+      </div>
+    </div>
+    <div class="setup-row">
+      <span class="setup-label">Rounds</span>
+      <div class="setup-controls">
+        <button class="btn-step" data-field="rounds" data-dir="-1" aria-label="Decrease rounds">&minus;</button>
+        <span class="setup-value" id="roundsValue">4</span>
+        <button class="btn-step" data-field="rounds" data-dir="1" aria-label="Increase rounds">+</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btnBegin">Begin</button>
+    </div>
+  </div>
+
+  <!-- ── Timer ── -->
+  <div id="timerView" class="view timer-view">
+    <div class="phase-label work" id="phaseLabel">Write</div>
+    <div class="countdown" id="countdown">25:00</div>
+    <div class="round-info" id="roundInfo">Round 1 of 4</div>
+    <div class="progress-bar">
+      <div class="progress-fill work" id="progressFill"></div>
+    </div>
+    <div class="paused-label" id="pausedLabel">PAUSED</div>
+    <div class="timer-actions">
+      <button class="btn btn-ghost" id="btnPause">Pause</button>
+      <button class="btn btn-ghost" id="btnStop">Stop</button>
+    </div>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div id="completeView" class="view complete-view">
+    <div class="done-title">Done.</div>
+    <div class="done-summary" id="doneSummary"></div>
+    <div class="actions">
+      <button class="btn btn-primary" id="btnAgain">Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ═══ Constants ═══ */
+
+  const STORAGE_KEY = "vibe.writing-timer.v1";
+
+  const Stage = {
+    IDLE: "idle",
+    RUNNING: "running",
+    PAUSED: "paused",
+    COMPLETE: "complete"
+  };
+
+  const LIMITS = {
+    work:   { min: 1, max: 90, step: 5 },
+    rest:   { min: 1, max: 30, step: 1 },
+    rounds: { min: 1, max: 20, step: 1 }
+  };
+
+  /* ═══ State ═══ */
+
+  const defaultConfig = () => ({
+    workMin: 25,
+    restMin: 5,
+    rounds: 4
+  });
+
+  let config = defaultConfig();
+
+  const runtime = {
+    stage: Stage.IDLE,
+    phase: "work",       // "work" | "rest"
+    round: 1,
+    phaseEndTime: 0,     // absolute timestamp (ms)
+    phaseDurationMs: 0,  // total duration of current phase
+    pausedRemaining: 0,  // ms remaining when paused
+    tickHandle: null,
+    sessionStartTime: 0
+  };
+
+  /* ═══ DOM refs ═══ */
+
+  const $ = (id) => document.getElementById(id);
+
+  const setupView   = $("setupView");
+  const timerView   = $("timerView");
+  const completeView = $("completeView");
+
+  const workValueEl   = $("workValue");
+  const restValueEl   = $("restValue");
+  const roundsValueEl = $("roundsValue");
+
+  const phaseLabel   = $("phaseLabel");
+  const countdownEl  = $("countdown");
+  const roundInfoEl  = $("roundInfo");
+  const progressFill = $("progressFill");
+  const pausedLabel  = $("pausedLabel");
+  const doneSummary  = $("doneSummary");
+
+  const btnBegin = $("btnBegin");
+  const btnPause = $("btnPause");
+  const btnStop  = $("btnStop");
+  const btnAgain = $("btnAgain");
+
+  /* ═══ Persistence ═══ */
+
+  function loadConfig(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw){
+        const saved = JSON.parse(raw);
+        config.workMin  = saved.workMin  ?? 25;
+        config.restMin  = saved.restMin  ?? 5;
+        config.rounds   = saved.rounds   ?? 4;
+      }
+    } catch(e){ /* ignore */ }
+  }
+
+  function saveConfig(){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    } catch(e){ /* ignore */ }
+  }
+
+  /* ═══ UI rendering ═══ */
+
+  function renderSetup(){
+    workValueEl.textContent   = config.workMin + " min";
+    restValueEl.textContent   = config.restMin + " min";
+    roundsValueEl.textContent = config.rounds;
+  }
+
+  function showView(name){
+    setupView.classList.toggle("active", name === "setup");
+    timerView.classList.toggle("active", name === "timer");
+    completeView.classList.toggle("active", name === "complete");
+  }
+
+  function formatTime(ms){
+    const totalSec = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function updateTimerUI(remainingMs){
+    countdownEl.textContent = formatTime(remainingMs);
+
+    const elapsed = runtime.phaseDurationMs - remainingMs;
+    const pct = runtime.phaseDurationMs > 0
+      ? Math.min(100, Math.max(0, (elapsed / runtime.phaseDurationMs) * 100))
+      : 0;
+    progressFill.style.width = pct + "%";
+  }
+
+  function setPhaseUI(phase){
+    const isWork = phase === "work";
+    phaseLabel.textContent = isWork ? "Write" : "Rest";
+    phaseLabel.className = "phase-label " + (isWork ? "work" : "rest");
+    progressFill.className = "progress-fill " + (isWork ? "work" : "rest");
+    roundInfoEl.textContent = "Round " + runtime.round + " of " + config.rounds;
+  }
+
+  /* ═══ Audio ═══ */
+
+  let audioCtx = null;
+  let silentAudio = null;
+
+  // ~1 second of silence as a minimal MP3 (39 MPEG1 L3 frames, 32kbps, 44100Hz)
+  // Keeps iOS audio session alive in the background
+  const SILENT_MP3 = "data:audio/mpeg;base64,//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//swBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+zAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7MAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+  function initAudioContext(){
+    if (!audioCtx){
+      const Ctor = window.AudioContext || window.webkitAudioContext;
+      if (Ctor) audioCtx = new Ctor();
+    }
+    if (audioCtx && audioCtx.state === "suspended"){
+      audioCtx.resume();
+    }
+  }
+
+  function startSilentLoop(){
+    if (silentAudio) return;
+    silentAudio = new Audio(SILENT_MP3);
+    silentAudio.loop = true;
+    silentAudio.volume = 0.01;
+    silentAudio.play().catch(function(){});
+  }
+
+  function stopSilentLoop(){
+    if (silentAudio){
+      silentAudio.pause();
+      silentAudio.currentTime = 0;
+      silentAudio = null;
+    }
+  }
+
+  function playChime(type){
+    if (!audioCtx) return;
+
+    // Ensure audio context is running
+    if (audioCtx.state === "suspended") audioCtx.resume();
+
+    const now = audioCtx.currentTime;
+    let notes, delay, decay;
+
+    if (type === "rest"){
+      // Work ended → rest: gentle descending (time to relax)
+      notes = [783.99, 659.25, 523.25]; // G5, E5, C5
+      delay = 0.25;
+      decay = 0.7;
+    } else if (type === "work"){
+      // Rest ended → work: ascending (back to writing)
+      notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+      delay = 0.25;
+      decay = 0.7;
+    } else {
+      // Complete: celebratory arpeggio
+      notes = [523.25, 659.25, 783.99, 1046.50, 783.99]; // C5 E5 G5 C6 G5
+      delay = 0.2;
+      decay = 0.9;
+    }
+
+    notes.forEach(function(freq, i){
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, now + i * delay);
+
+      gain.gain.setValueAtTime(0, now + i * delay);
+      gain.gain.linearRampToValueAtTime(0.25, now + i * delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * delay + decay);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + i * delay);
+      osc.stop(now + i * delay + decay + 0.05);
+    });
+  }
+
+  /* ═══ Wake Lock ═══ */
+
+  let wakeLockSentinel = null;
+
+  async function requestWakeLock(){
+    if (!("wakeLock" in navigator)) return;
+    try {
+      wakeLockSentinel = await navigator.wakeLock.request("screen");
+    } catch(e){ /* ignore */ }
+  }
+
+  function releaseWakeLock(){
+    if (wakeLockSentinel){
+      wakeLockSentinel.release().catch(function(){});
+      wakeLockSentinel = null;
+    }
+  }
+
+  /* ═══ Timer logic ═══ */
+
+  function startSession(){
+    initAudioContext();
+    startSilentLoop();
+
+    runtime.stage = Stage.RUNNING;
+    runtime.round = 1;
+    runtime.phase = "work";
+    runtime.sessionStartTime = Date.now();
+
+    startPhase("work", config.workMin * 60 * 1000);
+    showView("timer");
+    requestWakeLock();
+  }
+
+  function startPhase(phase, durationMs){
+    runtime.phase = phase;
+    runtime.phaseDurationMs = durationMs;
+    runtime.phaseEndTime = Date.now() + durationMs;
+    runtime.pausedRemaining = 0;
+
+    setPhaseUI(phase);
+    updateTimerUI(durationMs);
+    pausedLabel.classList.remove("visible");
+    btnPause.textContent = "Pause";
+
+    clearInterval(runtime.tickHandle);
+    runtime.tickHandle = setInterval(tick, 200);
+  }
+
+  function tick(){
+    if (runtime.stage !== Stage.RUNNING) return;
+
+    const remaining = runtime.phaseEndTime - Date.now();
+    if (remaining <= 0){
+      transitionPhase();
+    } else {
+      updateTimerUI(remaining);
+    }
+  }
+
+  function transitionPhase(){
+    clearInterval(runtime.tickHandle);
+
+    if (runtime.phase === "work"){
+      // Work just ended
+      if (runtime.round >= config.rounds){
+        // All rounds done — no rest after final work
+        completeSession();
+        return;
+      }
+      // Transition to rest
+      playChime("rest");
+      doHaptic([20, 30, 20]);
+      startPhase("rest", config.restMin * 60 * 1000);
+    } else {
+      // Rest just ended — next work round
+      runtime.round++;
+      playChime("work");
+      doHaptic([15, 20, 15, 20, 15]);
+      startPhase("work", config.workMin * 60 * 1000);
+    }
+  }
+
+  function completeSession(){
+    runtime.stage = Stage.COMPLETE;
+    clearInterval(runtime.tickHandle);
+
+    playChime("complete");
+    doHaptic([20, 40, 20, 40, 20, 40, 20]);
+    releaseWakeLock();
+
+    const totalMs = Date.now() - runtime.sessionStartTime;
+    const totalMin = Math.round(totalMs / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    let timeStr = "";
+    if (h > 0) timeStr += h + "h ";
+    timeStr += m + "m";
+
+    doneSummary.textContent = config.rounds + " round" + (config.rounds > 1 ? "s" : "")
+      + "  \u00B7  " + timeStr + " total";
+
+    showView("complete");
+
+    // Stop silent audio after a short delay so the final chime finishes
+    setTimeout(stopSilentLoop, 2000);
+  }
+
+  function pauseSession(){
+    if (runtime.stage !== Stage.RUNNING) return;
+    runtime.stage = Stage.PAUSED;
+    runtime.pausedRemaining = runtime.phaseEndTime - Date.now();
+    clearInterval(runtime.tickHandle);
+
+    pausedLabel.classList.add("visible");
+    btnPause.textContent = "Resume";
+    releaseWakeLock();
+  }
+
+  function resumeSession(){
+    if (runtime.stage !== Stage.PAUSED) return;
+    runtime.stage = Stage.RUNNING;
+    runtime.phaseEndTime = Date.now() + runtime.pausedRemaining;
+    runtime.pausedRemaining = 0;
+
+    pausedLabel.classList.remove("visible");
+    btnPause.textContent = "Pause";
+    runtime.tickHandle = setInterval(tick, 200);
+    requestWakeLock();
+  }
+
+  function stopSession(){
+    runtime.stage = Stage.IDLE;
+    clearInterval(runtime.tickHandle);
+    releaseWakeLock();
+    stopSilentLoop();
+    showView("setup");
+  }
+
+  /* ═══ Haptics ═══ */
+
+  function doHaptic(pattern){
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  }
+
+  /* ═══ Stepper controls ═══ */
+
+  function adjustField(field, dir){
+    const lim = LIMITS[field];
+    if (field === "work"){
+      config.workMin = Math.max(lim.min, Math.min(lim.max, config.workMin + dir * lim.step));
+    } else if (field === "rest"){
+      config.restMin = Math.max(lim.min, Math.min(lim.max, config.restMin + dir * lim.step));
+    } else if (field === "rounds"){
+      config.rounds = Math.max(lim.min, Math.min(lim.max, config.rounds + dir * lim.step));
+    }
+    saveConfig();
+    renderSetup();
+  }
+
+  /* ═══ Event wiring ═══ */
+
+  document.querySelectorAll(".btn-step").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var field = btn.dataset.field;
+      var dir   = parseInt(btn.dataset.dir, 10);
+      adjustField(field, dir);
+    });
+  });
+
+  btnBegin.addEventListener("click", startSession);
+
+  btnPause.addEventListener("click", function(){
+    if (runtime.stage === Stage.RUNNING) pauseSession();
+    else if (runtime.stage === Stage.PAUSED) resumeSession();
+  });
+
+  btnStop.addEventListener("click", stopSession);
+  btnAgain.addEventListener("click", function(){ showView("setup"); });
+
+  /* ── Lifecycle ── */
+
+  window.addEventListener("beforeunload", function(e){
+    if (runtime.stage === Stage.RUNNING || runtime.stage === Stage.PAUSED){
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
+  document.addEventListener("visibilitychange", function(){
+    if (document.visibilityState === "visible" && runtime.stage === Stage.RUNNING){
+      // Recalculate on return — the wall-clock-based timer handles drift
+      tick();
+      requestWakeLock();
+    }
+  });
+
+  /* ═══ Init ═══ */
+
+  loadConfig();
+  renderSetup();
+
+})();
+</script>
+</body>
+</html>
