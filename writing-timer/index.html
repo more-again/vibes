@@ -85,8 +85,34 @@
 
     /* ── Setup view ── */
 
-    .view { display: none; }
-    .view.active { display: block; }
+    .view {
+      display: none !important;
+      opacity: 0;
+    }
+    .view.active {
+      display: block !important;
+      animation: fadeIn 0.3s ease forwards;
+    }
+    .view.timer-view.active {
+      display: flex !important;
+    }
+    .view.fading-out {
+      display: block !important;
+      animation: fadeOut 0.2s ease forwards;
+    }
+    .view.timer-view.fading-out {
+      display: flex !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-6px); }
+    }
 
     .setup-row {
       display: flex;
@@ -196,11 +222,8 @@
 
     .timer-view {
       text-align: center;
-      flex: 1;
-      display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding-bottom: 2rem;
+      align-items: center;
     }
 
     .phase-label {
@@ -268,39 +291,15 @@
     /* ── Paused indicator ── */
 
     .paused-label {
-      display: none;
       font-size: 0.85rem;
       color: var(--text-light);
       margin-bottom: 1rem;
       letter-spacing: 0.1em;
+      visibility: hidden;
     }
 
     .paused-label.visible {
-      display: block;
-    }
-
-    /* ── Complete view ── */
-
-    .complete-view {
-      text-align: center;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-bottom: 2rem;
-    }
-
-    .done-title {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .done-summary {
-      font-size: 0.9rem;
-      color: var(--text-light);
-      margin-bottom: 2.5rem;
-      line-height: 1.8;
+      visibility: visible;
     }
 
     /* ── Misc ── */
@@ -376,16 +375,7 @@
     <div class="paused-label" id="pausedLabel">PAUSED</div>
     <div class="timer-actions">
       <button class="btn btn-ghost" id="btnPause">Pause</button>
-      <button class="btn btn-ghost" id="btnStop">Stop</button>
-    </div>
-  </div>
-
-  <!-- ── Complete ── -->
-  <div id="completeView" class="view complete-view">
-    <div class="done-title">Done.</div>
-    <div class="done-summary" id="doneSummary"></div>
-    <div class="actions">
-      <button class="btn btn-primary" id="btnAgain">Again</button>
+      <button class="btn btn-primary" id="btnDone">Done.</button>
     </div>
   </div>
 </div>
@@ -438,7 +428,6 @@
 
   const setupView   = $("setupView");
   const timerView   = $("timerView");
-  const completeView = $("completeView");
 
   const workValueEl   = $("workValue");
   const restValueEl   = $("restValue");
@@ -449,12 +438,10 @@
   const roundInfoEl  = $("roundInfo");
   const progressFill = $("progressFill");
   const pausedLabel  = $("pausedLabel");
-  const doneSummary  = $("doneSummary");
 
   const btnBegin = $("btnBegin");
   const btnPause = $("btnPause");
-  const btnStop  = $("btnStop");
-  const btnAgain = $("btnAgain");
+  const btnDone  = $("btnDone");
 
   /* ═══ Persistence ═══ */
 
@@ -485,9 +472,28 @@
   }
 
   function showView(name){
-    setupView.classList.toggle("active", name === "setup");
-    timerView.classList.toggle("active", name === "timer");
-    completeView.classList.toggle("active", name === "complete");
+    var views = [setupView, timerView];
+    var incoming = name === "setup" ? setupView : timerView;
+
+    // Find currently active view
+    var outgoing = null;
+    views.forEach(function(v){
+      if (v.classList.contains("active") && v !== incoming) outgoing = v;
+    });
+
+    if (outgoing) {
+      // Fade out, then swap
+      outgoing.classList.add("fading-out");
+      outgoing.classList.remove("active");
+      setTimeout(function(){
+        outgoing.classList.remove("fading-out");
+        incoming.classList.add("active");
+      }, 200);
+    } else {
+      // No outgoing — just show
+      views.forEach(function(v){ v.classList.remove("active"); });
+      incoming.classList.add("active");
+    }
   }
 
   function formatTime(ms){
@@ -686,21 +692,11 @@
     doHaptic([20, 40, 20, 40, 20, 40, 20]);
     releaseWakeLock();
 
-    const totalMs = Date.now() - runtime.sessionStartTime;
-    const totalMin = Math.round(totalMs / 60000);
-    const h = Math.floor(totalMin / 60);
-    const m = totalMin % 60;
-    let timeStr = "";
-    if (h > 0) timeStr += h + "h ";
-    timeStr += m + "m";
-
-    doneSummary.textContent = config.rounds + " round" + (config.rounds > 1 ? "s" : "")
-      + "  \u00B7  " + timeStr + " total";
-
-    showView("complete");
-
-    // Stop silent audio after a short delay so the final chime finishes
-    setTimeout(stopSilentLoop, 2000);
+    // Let the final chime play, then return to setup
+    setTimeout(function(){
+      stopSilentLoop();
+      showView("setup");
+    }, 2500);
   }
 
   function pauseSession(){
@@ -779,8 +775,7 @@
     else if (runtime.stage === Stage.PAUSED) resumeSession();
   });
 
-  btnStop.addEventListener("click", stopSession);
-  btnAgain.addEventListener("click", function(){ showView("setup"); });
+  btnDone.addEventListener("click", stopSession);
 
   /* ── Lifecycle ── */
 
