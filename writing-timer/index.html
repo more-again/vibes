@@ -626,6 +626,7 @@
   function startSession(){
     initAudioContext();
     startSilentLoop();
+    requestNotifPermission();
 
     runtime.stage = Stage.RUNNING;
     runtime.round = 1;
@@ -676,12 +677,14 @@
       // Transition to rest
       playChime("rest");
       doHaptic([20, 30, 20]);
+      sendNotification("Time to rest", "Round " + runtime.round + " complete. Take a " + config.restMin + " min break.", [200, 100, 200, 100, 200]);
       startPhase("rest", config.restMin * 60 * 1000);
     } else {
       // Rest just ended — next work round
       runtime.round++;
       playChime("work");
       doHaptic([15, 20, 15, 20, 15]);
+      sendNotification("Back to writing", "Round " + runtime.round + " of " + config.rounds + ". Let's go.", [200, 100, 200]);
       startPhase("work", config.workMin * 60 * 1000);
     }
   }
@@ -692,6 +695,7 @@
 
     playChime("complete");
     doHaptic([20, 40, 20, 40, 20, 40, 20]);
+    sendNotification("Session complete", config.rounds + " round" + (config.rounds > 1 ? "s" : "") + " done. Nice work.", [200, 100, 200, 100, 200, 100, 200]);
     releaseWakeLock();
 
     // Let the final chime play, then return to setup
@@ -736,6 +740,38 @@
 
   function doHaptic(pattern){
     if (navigator.vibrate) navigator.vibrate(pattern);
+  }
+
+  /* ═══ Notifications ═══ */
+
+  let swRegistration = null;
+  let notifPermission = typeof Notification !== "undefined" ? Notification.permission : "denied";
+
+  // Register service worker
+  if ("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").then(function(reg){
+      swRegistration = reg;
+    }).catch(function(){});
+  }
+
+  function requestNotifPermission(){
+    if (typeof Notification === "undefined") return;
+    if (notifPermission === "granted") return;
+    if (notifPermission === "denied") return; // don't re-ask
+    Notification.requestPermission().then(function(result){
+      notifPermission = result;
+    });
+  }
+
+  function sendNotification(title, body, vibPattern){
+    if (notifPermission !== "granted" || !swRegistration) return;
+    swRegistration.showNotification(title, {
+      body: body,
+      tag: "writing-timer-phase",
+      renotify: true,
+      vibrate: vibPattern || [200, 100, 200],
+      silent: false
+    }).catch(function(){});
   }
 
   /* ═══ Stepper controls ═══ */
