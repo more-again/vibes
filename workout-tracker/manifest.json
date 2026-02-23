@@ -1,0 +1,10 @@
+{
+  "name": "Workout Tracker",
+  "short_name": "Workouts",
+  "description": "Track workout exercises and progress",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait"
+}

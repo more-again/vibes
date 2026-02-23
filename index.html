@@ -279,8 +279,48 @@
       body { padding: 1.5rem; padding-top: 2rem; }
     }
 
+    /* ── Workout Tracker tile: dark athletic + dumbbell ── */
+    .preview-workout {
+      background: linear-gradient(170deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .mini-dumbbell {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      animation: dumbbell-lift 2s ease-in-out infinite;
+    }
+
+    .mini-dumbbell .db-plate {
+      width: 8px;
+      height: 22px;
+      background: #e94560;
+      border-radius: 2px;
+    }
+
+    .mini-dumbbell .db-plate-outer {
+      width: 6px;
+      height: 16px;
+      background: #b8344d;
+      border-radius: 2px;
+    }
+
+    .mini-dumbbell .db-bar {
+      width: 20px;
+      height: 4px;
+      background: #8890a0;
+      border-radius: 1px;
+    }
+
+    @keyframes dumbbell-lift {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-6px) rotate(-8deg); }
+      50% { transform: translateY(-2px) rotate(0deg); }
+      75% { transform: translateY(-6px) rotate(8deg); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .cursor, .mini-bubble, .hourglass, .sand-top, .sand-bottom, .sand-stream { animation: none; }
+      .cursor, .mini-bubble, .hourglass, .sand-top, .sand-bottom, .sand-stream, .mini-dumbbell { animation: none; }
       .sand-top { transform: scaleY(0.5); }
       .sand-bottom { transform: scaleY(0.5); }
       .sand-stream { opacity: 1; }
@@ -316,6 +356,22 @@
       <div class="tile-label">
         <div class="app-name">writing-timer</div>
         <div class="app-desc">pomodoro for writers</div>
+      </div>
+    </a>
+
+    <a class="app-link" href="./workout-tracker/">
+      <div class="tile-preview preview-workout">
+        <div class="mini-dumbbell">
+          <div class="db-plate-outer"></div>
+          <div class="db-plate"></div>
+          <div class="db-bar"></div>
+          <div class="db-plate"></div>
+          <div class="db-plate-outer"></div>
+        </div>
+      </div>
+      <div class="tile-label">
+        <div class="app-name">workout-tracker</div>
+        <div class="app-desc">exercise logger</div>
       </div>
     </a>
 
